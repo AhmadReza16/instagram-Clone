@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
@@ -47,3 +48,28 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+    
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(blank=True)
+    website = models.CharField(max_length=255, blank=True)
+    avatar = models.ImageField(upload_to='avatars/', blank=True)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.user.username} Profile"
+
+class Follow(models.Model):
+    follower = models.ForeignKey(User, related_name='following_set', on_delete=models.CASCADE)
+    following = models.ForeignKey(User, related_name='followers_set', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('follower', 'following')
+        indexes = [
+            models.Index(fields=['follower']),
+            models.Index(fields=['following']),
+        ]
+
+    def __str__(self):
+        return f"{self.follower.username} → {self.following.username}"
