@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
     'users',
     'posts',
+    'notifications',
 ]
 
 REST_FRAMEWORK = {
