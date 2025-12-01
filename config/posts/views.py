@@ -4,11 +4,10 @@ from rest_framework.response import Response
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 
-from .models import Post, Comment, Like, SavedPost, Notification
+from .models import Post, Comment, Like, SavedPost
 from .serializers import (
     PostSerializer, PostCreateSerializer,
     CommentSerializer, LikeSerializer, SavedPostSerializer,
-    NotificationSerializer
 )
 
 # Create / List posts
@@ -41,16 +40,7 @@ class CommentCreateView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         comment = serializer.save(user=self.request.user)
-        # create notification
-        if comment.post.user != self.request.user:
-            Notification.objects.create(
-                sender=self.request.user,
-                receiver=comment.post.user,
-                notification_type='comment',
-                post=comment.post,
-                text=f"{self.request.user.username} commented: {comment.text[:100]}"
-            )
-        return comment
+
 
 # Like toggle (create/delete)
 class LikeToggleView(generics.GenericAPIView):
@@ -68,17 +58,7 @@ class LikeToggleView(generics.GenericAPIView):
         if existing:
             existing.delete()
             return Response({'liked': False}, status=status.HTTP_200_OK)
-        else:
-            like = Like.objects.create(user=user, post=post)
-            # notification
-            if post.user != user:
-                Notification.objects.create(
-                    sender=user,
-                    receiver=post.user,
-                    notification_type='like',
-                    post=post
-                )
-            return Response({'liked': True}, status=status.HTTP_201_CREATED)
+
 
 
 
@@ -98,17 +78,7 @@ class SaveToggleView(generics.GenericAPIView):
         if existing:
             existing.delete()
             return Response({'saved': False}, status=status.HTTP_200_OK)
-        else:
-            sp = SavedPost.objects.create(user=user, post=post)
-            # optional notification for save
-            if post.user != user:
-                Notification.objects.create(
-                    sender=user,
-                    receiver=post.user,
-                    notification_type='save',
-                    post=post
-                )
-            return Response({'saved': True}, status=status.HTTP_201_CREATED)
+
 
 
 

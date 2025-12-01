@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, PostImage, Comment, Like, SavedPost, Hashtag, Notification
+from .models import Post, PostImage, Comment, Like, SavedPost, Hashtag
 from django.db import transaction
 
 
@@ -37,15 +37,6 @@ class SavedPostSerializer(serializers.ModelSerializer):
         model = SavedPost
         fields = ('id', 'user', 'post', 'created_at')
 
-
-class NotificationSerializer(serializers.ModelSerializer):
-    sender = serializers.StringRelatedField(read_only=True)
-    receiver = serializers.StringRelatedField(read_only=True)
-    post = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    class Meta:
-        model = Notification
-        fields = ('id', 'sender', 'receiver', 'notification_type', 'post', 'text', 'is_read', 'created_at')
 
 
 class PostSerializer(serializers.ModelSerializer):

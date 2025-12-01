@@ -87,28 +87,4 @@ class SavedPost(models.Model):
         return f"{self.user} saved Post({self.post_id})"
     
 
-# نوتیفیکیشن ساده (موقتی داخل posts)
-class Notification(models.Model):
-    NOTI_TYPES = (
-        ('like', 'Like'),
-        ('comment', 'Comment'),
-        ('follow', 'Follow'),
-        ('save', 'Save'),
-    )
-
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_notifications')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
-    notification_type = models.CharField(max_length=20, choices=NOTI_TYPES)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, null=True, blank=True)
-    text = models.CharField(max_length=255, blank=True)
-    is_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(default=timezone.now)
-
-    class Meta:
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return f"Notification({self.notification_type}) from {self.sender} to {self.receiver}"
-        return f"{self.sender} -> {self.receiver} ({self.notification_type})"
-    
 

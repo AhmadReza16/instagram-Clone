@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, PostImage, Comment, Like, SavedPost, Hashtag, Notification
+from .models import Post, PostImage, Comment, Like, SavedPost, Hashtag
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
@@ -34,8 +34,3 @@ class SavedPostAdmin(admin.ModelAdmin):
 class HashtagAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
 
-
-@admin.register(Notification)
-class NotificationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'sender', 'receiver', 'notification_type', 'post', 'is_read', 'created_at')
-    list_filter = ('notification_type', 'is_read')
