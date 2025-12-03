@@ -61,17 +61,6 @@ class Comment(models.Model):
     def __str__(self):
         return f"Comment({self.id}) by {self.user} on Post({self.post_id})"
     
-class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
-    created_at = models.DateTimeField(default=timezone.now)
-
-    class Meta:
-        unique_together = ('user', 'post')  # مثل اینستاگرام: هر کاربر فقط یک‌بار لایک می‌کند
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return f"{self.user} likes Post({self.post_id})"
     
 
 class SavedPost(models.Model):

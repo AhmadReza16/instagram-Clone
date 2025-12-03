@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, PostImage, Comment, Like, SavedPost, Hashtag
+from .models import Post, PostImage, Comment, SavedPost, Hashtag
 from django.db import transaction
 
 
@@ -23,12 +23,6 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ('id', 'user', 'text', 'created_at')
 
 
-class LikeSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
-
-    class Meta:
-        model = Like
-        fields = ['id', 'user', 'post', 'created_at']
 
 class SavedPostSerializer(serializers.ModelSerializer):
     user = serializers.StringRelatedField(read_only=True)

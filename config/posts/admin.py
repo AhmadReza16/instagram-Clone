@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Post, PostImage, Comment, Like, SavedPost, Hashtag
+from .models import Post, PostImage, Comment, SavedPost, Hashtag
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
@@ -19,10 +19,6 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'post', 'created_at')
     search_fields = ('user__username', 'post__caption')
 
-
-@admin.register(Like)
-class LikeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'post', 'created_at')
 
 
 @admin.register(SavedPost)

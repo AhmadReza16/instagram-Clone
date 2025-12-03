@@ -4,10 +4,10 @@ from rest_framework.response import Response
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 
-from .models import Post, Comment, Like, SavedPost
+from .models import Post, Comment, SavedPost
 from .serializers import (
     PostSerializer, PostCreateSerializer,
-    CommentSerializer, LikeSerializer, SavedPostSerializer,
+    CommentSerializer, SavedPostSerializer,
 )
 
 # Create / List posts
@@ -42,26 +42,6 @@ class CommentCreateView(generics.CreateAPIView):
         comment = serializer.save(user=self.request.user)
 
 
-# Like toggle (create/delete)
-class LikeToggleView(generics.GenericAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = LikeSerializer
-
-    def post(self, request, *args, **kwargs):
-        user = request.user
-        post_id = request.data.get('post')
-        if not post_id:
-            return Response({'detail': 'post field is required.'}, status=status.HTTP_400_BAD_REQUEST)
-
-        post = get_object_or_404(Post, pk=post_id)
-        existing = Like.objects.filter(user=user, post=post).first()
-        if existing:
-            existing.delete()
-            return Response({'liked': False}, status=status.HTTP_200_OK)
-
-
-
-
 # Save toggle
 class SaveToggleView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -78,8 +58,6 @@ class SaveToggleView(generics.GenericAPIView):
         if existing:
             existing.delete()
             return Response({'saved': False}, status=status.HTTP_200_OK)
-
-
 
 
 
