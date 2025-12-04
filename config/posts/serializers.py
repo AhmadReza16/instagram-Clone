@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, PostImage, Comment, SavedPost, Hashtag
+from .models import Post, PostImage, SavedPost, Hashtag
 from django.db import transaction
 
 
@@ -13,14 +13,6 @@ class HashtagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hashtag
         fields = ('id', 'name')
-
-
-class CommentSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
-
-    class Meta:
-        model = Comment
-        fields = ('id', 'user', 'text', 'created_at')
 
 
 
@@ -39,7 +31,6 @@ class PostSerializer(serializers.ModelSerializer):
     likes_count = serializers.IntegerField(read_only=True)
     comments_count = serializers.IntegerField(read_only=True)
     saved_count = serializers.IntegerField(read_only=True)
-    comments = CommentSerializer(many=True, read_only=True)
     hashtags = HashtagSerializer(many=True, read_only=True)
 
     class Meta:

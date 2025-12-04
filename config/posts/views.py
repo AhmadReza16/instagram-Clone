@@ -4,10 +4,10 @@ from rest_framework.response import Response
 from django.db.models import Count
 from django.shortcuts import get_object_or_404
 
-from .models import Post, Comment, SavedPost
+from .models import Post, SavedPost
 from .serializers import (
     PostSerializer, PostCreateSerializer,
-    CommentSerializer, SavedPostSerializer,
+     SavedPostSerializer,
 )
 
 # Create / List posts
@@ -30,16 +30,6 @@ class PostDetailView(generics.RetrieveDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Post.objects.all().select_related('user').prefetch_related('images', 'comments', 'likes', 'hashtags')
     serializer_class = PostSerializer
-
-
-# Comment Create
-class CommentCreateView(generics.CreateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = CommentSerializer
-    queryset = Comment.objects.all()
-
-    def perform_create(self, serializer):
-        comment = serializer.save(user=self.request.user)
 
 
 # Save toggle
