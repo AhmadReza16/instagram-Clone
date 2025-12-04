@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+
+from posts.models import Post
 from .models import Like
 from posts.serializers import PostSerializer  # read-only use of post data
 
@@ -14,7 +16,7 @@ class SimpleUserSerializer(serializers.ModelSerializer):
 
 class LikeSerializer(serializers.ModelSerializer):
     user = SimpleUserSerializer(read_only=True)
-    post = serializers.PrimaryKeyRelatedField(queryset=None, required=True)  # set queryset in view
+    post = serializers.PrimaryKeyRelatedField(queryset=Post.objects.all())
 
     class Meta:
         model = Like
