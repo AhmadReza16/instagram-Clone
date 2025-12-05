@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, PostImage, SavedPost, Hashtag
+from .models import Post, PostImage, Hashtag
 from django.db import transaction
 
 
@@ -13,15 +13,6 @@ class HashtagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hashtag
         fields = ('id', 'name')
-
-
-
-class SavedPostSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
-
-    class Meta:
-        model = SavedPost
-        fields = ('id', 'user', 'post', 'created_at')
 
 
 

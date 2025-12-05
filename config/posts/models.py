@@ -50,20 +50,4 @@ class PostImage(models.Model):
         return f"Image({self.id}) for Post({self.post_id})"
     
 
-    
-    
-
-class SavedPost(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='saved_posts')
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='saved_by')
-    created_at = models.DateTimeField(default=timezone.now)
-
-    class Meta:
-        unique_together = ('user', 'post')
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return f"{self.user} saved Post({self.post_id})"
-    
-
 
