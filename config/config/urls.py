@@ -12,5 +12,9 @@ urlpatterns = [
     path('api/follow/', include('follow.urls')),
     path('api/likes/', include('likes.urls')),
     path('api/comments/', include('comments.urls')),
+    path('api/messages/', include('messages.urls')),
+    path('api/saved/', include('saved.urls')),
+    path('api/search/', include('search.urls')),
+    path('api/stories/', include('stories.urls')),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
