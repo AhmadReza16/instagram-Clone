@@ -2,22 +2,61 @@ import axios from "axios";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
+
+type FetchOptions = RequestInit & {
+  auth?: boolean;
+};
+
+export async function apiClient<T>(
+  endpoint: string,
+  options: FetchOptions = {}
+): Promise<T> {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  if (options.auth) {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+  }
+
+  const res = await fetch(`${BASE_URL}${endpoint}`, {
+    ...options,
+    headers,
+  });
+
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.detail || "Something went wrong");
+  }
+
+  return res.json();
+}
+
+
 let accessToken: string | null = null;
 let refreshToken: string | null = null;
 
-// ست کردن توکن‌ها از بیرون
+export const initializeTokens = () => {
+  accessToken = localStorage.getItem("access_token");
+  refreshToken = localStorage.getItem("refresh_token");
+};
+
 export const setTokens = (access: string | null, refresh: string | null) => {
   accessToken = access;
   refreshToken = refresh;
+  if (access) localStorage.setItem("access_token", access);
+  if (refresh) localStorage.setItem("refresh_token", refresh);
 };
 
-// axios instance
 const api = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true, // برای refresh token با cookie اگر نیاز شد
+  withCredentials: true, 
 });
 
-// اضافه کردن AccessToken قبل از هر درخواست
+
 api.interceptors.request.use((config) => {
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
@@ -25,13 +64,12 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// هندل کردن 401: تلاش برای refresh token
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const original = error.config;
 
-    // اگر 401 بود و قبلاً retry نشده
+  
     if (error.response?.status === 401 && !original._retry && refreshToken) {
       original._retry = true;
 
@@ -40,9 +78,9 @@ api.interceptors.response.use(
           refresh: refreshToken,
         });
 
-        accessToken = res.data.access; // توکن جدید
+        accessToken = res.data.access;
 
-        return api(original); // ارسال دوباره درخواست
+        return api(original);
       } catch (err) {
         console.log("Refresh token expired. Logging out...");
         accessToken = null;
