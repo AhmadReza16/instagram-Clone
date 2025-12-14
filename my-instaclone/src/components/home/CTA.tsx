@@ -10,7 +10,7 @@ export default function CTA() {
       </p>
 
       <a
-        href="/signup"
+        href="/register"
         className="inline-block mt-6 px-8 py-4 bg-black text-white rounded-lg font-medium"
       >
         Get Started

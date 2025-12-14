@@ -11,7 +11,7 @@ export default function Hero() {
 
       <div className="mt-8 flex justify-center space-x-4">
         <a
-          href="/stories"
+          href="/stories/create"
           className="px-6 py-3 bg-black text-white rounded-lg font-medium"
         >
           Explore Stories
