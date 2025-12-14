@@ -1,56 +1,34 @@
-import api, { setTokens } from "@/lib/api-client";
+import { apiClient } from "@/lib/api-client";
 
-export interface LoginPayload {
-  username: string;
+interface LoginPayload {
+  email: string;
   password: string;
 }
 
-export interface RegisterPayload {
+interface RegisterPayload {
   username: string;
   email: string;
   password: string;
 }
 
-export interface AuthResponse {
-  access: string;
-  refresh: string;
-  user: {
-    id: number;
-    username: string;
-    email: string;
-    avatar?: string | null;
-  };
+export function login(payload: LoginPayload) {
+  return apiClient("/auth/login/", {
+    method: "POST",
+    body: JSON.stringify(payload),
+    credentials: "include", // خیلی مهم
+  });
 }
 
-export const authService = {
-  async register(data: RegisterPayload): Promise<AuthResponse> {
-    const res = await api.post("/api/users/register/", data);
-    const result = res.data as AuthResponse;
+export function register(payload: RegisterPayload) {
+  return apiClient("/auth/register/", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
 
-    setTokens(result.access, result.refresh); // ذخیره توکن
-    return result;
-  },
-
-  async login(data: LoginPayload): Promise<AuthResponse> {
-    const res = await api.post("/api/users/login/", data);
-    const result = res.data as AuthResponse;
-
-    setTokens(result.access, result.refresh);
-    return result;
-  },
-
-  async logout() {
-    try {
-      await api.post("/api/users/logout/");
-    } catch (err) {
-      console.log("Logout error but continuing:", err);
-    }
-
-    setTokens(null, null); // پاک کردن توکن‌ها
-  },
-
-  async getCurrentUser() {
-    const res = await api.get("/api/users/me/");
-    return res.data;
-  },
-};
+export function logout() {
+  return apiClient("/auth/logout/", {
+    method: "POST",
+    credentials: "include",
+  });
+}
