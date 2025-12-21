@@ -1,27 +1,54 @@
 "use client";
 
-import { Heart, Bookmark } from "lucide-react";
-import { useLike } from "@/hooks/useLike";
-import { useSave } from "@/hooks/useSave";
+import { useState } from "react";
+import { likePost, unlikePost } from "@/services/posts";
+import { Heart } from "lucide-react";
 
-export function PostActions({ post }: { post: any }) {
-  const { liked, count, toggleLike } = useLike(
-    post.id,
-    post.is_liked,
-    post.likes_count
-  );
-  const { saved, toggleSave } = useSave(post.id, post.is_saved);
+interface Props {
+  postId: string;
+  initialLiked: boolean;
+  initialLikesCount: number;
+}
+
+export default function PostActions({
+  postId,
+  initialLiked,
+  initialLikesCount,
+}: Props) {
+  const [isLiked, setIsLiked] = useState(initialLiked);
+  const [likesCount, setLikesCount] = useState(initialLikesCount);
+  const [loading, setLoading] = useState(false);
+
+  const toggleLike = async () => {
+    if (loading) return;
+
+    setLoading(true);
+
+    // optimistic update
+    setIsLiked(!isLiked);
+    setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
+
+    try {
+      if (!isLiked) {
+        await likePost(postId);
+      } else {
+        await unlikePost(postId);
+      }
+    } catch (err) {
+      // rollback
+      setIsLiked(isLiked);
+      setLikesCount(initialLikesCount);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="flex items-center gap-4">
-      <button onClick={toggleLike} className="flex items-center gap-1">
-        <Heart className={liked ? "fill-red-500 text-red-500" : ""} />
-        <span>{count}</span>
-      </button>
-
-      <button onClick={toggleSave}>
-        <Bookmark className={saved ? "fill-black" : ""} />
-      </button>
-    </div>
+    <button onClick={toggleLike} className="flex items-center gap-1">
+      <Heart
+        className={`w-6 h-6 ${isLiked ? "fill-red-500 text-red-500" : ""}`}
+      />
+      <span className="text-sm">{likesCount}</span>
+    </button>
   );
 }
