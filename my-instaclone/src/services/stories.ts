@@ -14,3 +14,15 @@ export function reactToStory(id: number, emoji: string) {
     body: JSON.stringify({ emoji }),
   });
 }
+import { apiClient } from "@/lib/api-client";
+
+export async function getStoryById(storyId: string) {
+  const res = await apiClient.get(`/stories/${storyId}/`);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch story");
+  }
+
+  return res.data;
+}
+
