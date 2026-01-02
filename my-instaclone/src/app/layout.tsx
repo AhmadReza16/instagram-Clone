@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
-import { ReactNode } from "react";
 import ReactQueryProvider from "../providers/ReactQueryProvider";
 import Header from "../components/ui/Header";
+import Toast from "@/components/ui/toast";
 
 export const metadata: Metadata = {
   title: "instagram",
@@ -21,6 +21,7 @@ export default function RootLayout({
         <ReactQueryProvider>
           <Header />
           <main className="max-w-3xl mx-auto">{children}</main>
+          <Toast />
         </ReactQueryProvider>
       </body>
     </html>
