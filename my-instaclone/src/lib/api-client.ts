@@ -1,5 +1,5 @@
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api";
 
 type FetchOptions = RequestInit;
 
@@ -23,3 +23,4 @@ export async function apiClient<T>(
 
   return res.json();
 }
+console.log("BASE_URL:", BASE_URL);
