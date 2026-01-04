@@ -11,16 +11,17 @@ export default function Hero() {
 
       <div className="mt-8 flex justify-center space-x-4">
         <a
-          href="/stories/create"
-          className="px-6 py-3 bg-black text-white rounded-lg font-medium"
+          href="/register"
+          className="px-6 py-3 bg-red-500 text-white rounded-lg font-medium hover:bg-red-600 transition-colors"
         >
-          Explore Stories
+          Create an account
         </a>
+        <h1 className="px-6 py-3 ">OR</h1>
         <a
-          href="/create"
-          className="px-6 py-3 border border-gray-300 rounded-lg font-medium"
+          href="/login"
+          className="px-6 py-3 border bg-red-500 text-white border-gray-300 rounded-lg font-medium hover:bg-red-600 transition-colors"
         >
-          Write a Story
+          Log in to your account.
         </a>
       </div>
     </section>
