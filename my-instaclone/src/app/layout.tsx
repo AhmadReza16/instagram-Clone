@@ -6,7 +6,7 @@ import Header from "../components/ui/Header";
 import Toast from "@/components/ui/toast";
 
 export const metadata: Metadata = {
-  title: "instagram",
+  title: "Instagram",
   description: "instagram Clone App built with Next.js",
 };
 
