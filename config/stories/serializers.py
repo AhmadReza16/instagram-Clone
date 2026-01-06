@@ -38,3 +38,14 @@ class HighlightSerializer(serializers.ModelSerializer):
     class Meta:
         model = Highlight
         fields = ['id', 'title', 'cover', 'stories', 'created_at']
+
+class StorySeenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StoryView
+        fields = ['id', 'viewer', 'viewed_at']
+
+class StoriFeedSerializer(serializers.ModelSerializer):
+    owner = serializers.StringRelatedField()
+    class Meta:
+        model = Story
+        fields = ['id', 'owner', 'media', 'caption', 'created_at', 'expires_at']

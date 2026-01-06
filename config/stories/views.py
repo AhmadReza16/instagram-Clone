@@ -12,7 +12,7 @@ from .models import (
 from users.models import User
 from follow.models import Follow   #   اپ فالو که ساختیم 
 from .serializers import (
-    StorySerializer, StoryMentionSerializer,
+    StorySeenSerializer, StorySerializer, StoryMentionSerializer,
     StoryReactionSerializer, StoryViewSerializer,
     HighlightSerializer
 )
@@ -104,5 +104,25 @@ class RemoveStoryFromHighlightView(generics.UpdateAPIView):
         highlight.stories.remove(story)
         return Response({"message": "Story removed from highlight"})
 
+class StoryFeedView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = StorySerializer
 
+    def get_queryset(self):
+        user = self.request.user
+        following_users = Follow.objects.filter(follower=user).values_list('following', flat=True)
+        now = timezone.now()
+        return Story.objects.filter(
+            owner__in=following_users,
+            expires_at__gt=now
+        ).order_by('-created_at')
+    
+class StorySeenView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = StorySeenSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return StoryView.objects.filter(story__owner=user).order_by('-viewed_at')
+    
     
