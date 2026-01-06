@@ -3,43 +3,46 @@
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { register } from "@/services/auth";
+import { login } from "@/services/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuthStore } from "@/store/useAuthStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function RegisterPage() {
+export default function LoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState("");
+  const setAuth = useAuthStore((s) => s.setAuth);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await register({ username, email, password });
-    router.replace("/login");
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await login({ email, password });
+      setAuth(data.user);
+      router.replace("/feed");
+    } catch (err: any) {
+      setError("Login failed. Please check your credentials.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <main className="flex justify-center items-center h-screen px-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl text-center">Register</CardTitle>
+          <CardTitle className="text-2xl text-center">Login</CardTitle>
         </CardHeader>
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <Label>Username</Label>
-              <Input
-                type="text"
-                placeholder="Your username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-
             <div className="space-y-2">
               <Label>Email</Label>
               <Input
@@ -61,16 +64,17 @@ export default function RegisterPage() {
                 required
               />
             </div>
-
-            <Button type="submit" className="w-full">
-              Create Account
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            <Button type="submit" className="w-full" disabled={loading}>
+              Login
+              {loading ? "Logging in..." : "Login"}
             </Button>
           </form>
 
           <p className="text-center text-sm text-gray-500 mt-4">
-            Already have an account?
-            <a href="/login" className="underline ml-1">
-              Login
+            No account?
+            <a href="/register" className="underline ml-1">
+              Register
             </a>
           </p>
         </CardContent>
