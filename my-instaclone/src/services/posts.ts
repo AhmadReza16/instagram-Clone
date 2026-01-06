@@ -1,19 +1,50 @@
 import { apiClient } from "@/lib/api-client";
+import { Post } from '@/types/api';
+interface FeedPostsResponse {
+results: Post[];
+nextPage: number | null;
+}
 
-export async function getSavedPosts() {
-  const res = await apiClient.get("/posts/saved/");
+interface GetFeedPostsParams {
+page?: number;
+}
+
+export async function getPostById(id: string) {
+  const res = await apiClient.get(`posts/${id}/`);
   return res.data;
 }
-export async function getPostById(id: string) {
-  const res = await apiClient.get(`/posts/${id}/`);
-  return res.data;
+
+export async function getFeedPosts() {
+  const res = await apiClient.get("posts/feed/");
+  if (!res.ok) {
+    throw new Error("Failed to fetch feed posts");
+  }
+  return res.data;;
+}
+
+export async function getFeedPosts(
+params: GetFeedPostsParams = {}
+): Promise<FeedPostsResponse> {
+const page = params.page ?? 1;
+
+const response = await apiClient.get("posts/feed/", {
+params: { page },
+});
+if (!response.ok) {
+throw new Error("Failed to fetch feed posts");
+}
+
+
+return {
+results: response.data.results,
+nextPage: response.data.next ? page + 1 : null,
+};
 }
 
 export async function getCommentsByPost(id: string) {
-  const res = await apiClient.get(`/posts/${id}/comments/`);
+  const res = await apiClient.get(`posts/${id}/comments/`);
   return res.data;
 }
-import { apiClient } from "@/lib/api-client";
 
 export async function addComment(
   postId: string,
@@ -27,17 +58,14 @@ export async function addComment(
   if (!res.ok) {
     throw new Error("Failed to add comment");
   }
-
   return res.data;
 }
-import { apiClient } from "@/lib/api-client";
 
 export async function getSavedPosts() {
-  const res = await apiClient.get("/posts/saved/");
+  const res = await apiClient.get("saved/save/");
 
   if (!res.ok) {
     throw new Error("Failed to fetch saved posts");
   }
-
   return res.data;
 }

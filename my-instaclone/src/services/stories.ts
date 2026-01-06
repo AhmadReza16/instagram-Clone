@@ -14,7 +14,6 @@ export function reactToStory(id: number, emoji: string) {
     body: JSON.stringify({ emoji }),
   });
 }
-import { apiClient } from "@/lib/api-client";
 
 export async function getStoryById(storyId: string) {
   const res = await apiClient.get(`/stories/${storyId}/`);
@@ -25,4 +24,10 @@ export async function getStoryById(storyId: string) {
 
   return res.data;
 }
-
+export async function getFeedStories() {
+  const res = await apiClient.get("/stories/feed/");
+  if (!res.ok) {
+    throw new Error("Failed to fetch feed stories");
+  }
+  return res.data;;
+}
