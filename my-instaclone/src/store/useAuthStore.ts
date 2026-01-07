@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { authService, LoginPayload, RegisterPayload } from "@/services/auth";
-import { setTokens } from "@/lib/api-client";
 
 export interface User {
   id: number;
@@ -36,8 +35,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const user = localStorage.getItem("user");
 
     if (access && refresh) {
-      setTokens(access, refresh);
-
       set({
         access,
         refresh,
@@ -52,8 +49,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     try {
       const res = await authService.login(data);
-
-      setTokens(res.access, res.refresh);
 
       localStorage.setItem("access", res.access);
       localStorage.setItem("refresh", res.refresh);
@@ -70,6 +65,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         error: err.response?.data?.detail || "Login failed",
         loading: false,
       });
+      throw err;
     }
   },
 
@@ -79,8 +75,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     try {
       const res = await authService.register(data);
-
-      setTokens(res.access, res.refresh);
 
       localStorage.setItem("access", res.access);
       localStorage.setItem("refresh", res.refresh);
@@ -97,18 +91,21 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         error: err.response?.data?.detail || "Register failed",
         loading: false,
       });
+      throw err;
     }
   },
 
   // Logout
   logout: async () => {
-    await authService.logout();
+    try {
+      await authService.logout();
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
 
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
     localStorage.removeItem("user");
-
-    setTokens(null, null);
 
     set({
       user: null,
