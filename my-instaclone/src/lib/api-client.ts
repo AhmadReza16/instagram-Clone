@@ -5,6 +5,18 @@ const apiClient = axios.create({
   withCredentials: true, // مهم: برای cookie-based auth
 });
 
+// Add token to request headers
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('access');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 // Optional: response interceptor برای refresh token
 apiClient.interceptors.response.use(
   (response) => response,
@@ -14,9 +26,20 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        await apiClient.post('/users/refresh/');
+        const refresh = localStorage.getItem('refresh');
+        const response = await apiClient.post('/users/token/refresh/', {
+          refresh: refresh,
+        });
+        
+        const newAccessToken = response.data.access;
+        localStorage.setItem('access', newAccessToken);
+        
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
+        localStorage.removeItem('access');
+        localStorage.removeItem('refresh');
+        localStorage.removeItem('user');
         return Promise.reject(refreshError);
       }
     }
