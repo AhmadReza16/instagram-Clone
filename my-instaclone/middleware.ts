@@ -5,10 +5,14 @@ const protectedRoutes = [
   "/stories",
   "/post",
   "/profile",
+  "/saved",
+  "/messages",
+  "/notifications",
+  "/explore",
 ];
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get("access_token")?.value;
+  const token = request.cookies.get("access")?.value;
   const pathname = request.nextUrl.pathname;
 
   const isProtected = protectedRoutes.some((route) =>
