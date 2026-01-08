@@ -1,9 +1,11 @@
 import { apiClient } from "@/lib/api-client";
 
-export function likePost(postId: number) {
-  return apiClient(`/posts/${postId}/like/`, { method: "POST" });
+export async function likePost(postId: number) {
+  const { data } = await apiClient.post(`/posts/${postId}/like/`);
+  return data;
 }
 
-export function unlikePost(postId: number) {
-  return apiClient(`/posts/${postId}/like/`, { method: "DELETE" });
+export async function unlikePost(postId: number) {
+  const { data } = await apiClient.delete(`/posts/${postId}/like/`);
+  return data;
 }

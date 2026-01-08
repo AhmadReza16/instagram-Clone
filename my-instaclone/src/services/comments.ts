@@ -1,12 +1,11 @@
 import { apiClient } from "@/lib/api-client";
 
-export function fetchComments(postId: number) {
-  return apiClient(`/posts/${postId}/comments/`);
+export async function fetchComments(postId: number) {
+  const { data } = await apiClient.get(`/posts/${postId}/comments/`);
+  return data;
 }
 
-export function createComment(postId: number, content: string) {
-  return apiClient(`/posts/${postId}/comments/`, {
-    method: "POST",
-    body: JSON.stringify({ content }),
-  });
+export async function createComment(postId: number, content: string) {
+  const { data } = await apiClient.post(`/posts/${postId}/comments/`, { content });
+  return data;
 }

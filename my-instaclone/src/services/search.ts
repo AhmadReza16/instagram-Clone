@@ -1,5 +1,8 @@
 import { apiClient } from "@/lib/api-client";
 
-export function searchAll(query: string) {
-  return apiClient(`/search/?q=${encodeURIComponent(query)}`);
+export async function searchAll(query: string) {
+  const { data } = await apiClient.get(`/search/`, {
+    params: { q: query },
+  });
+  return data;
 }

@@ -1,9 +1,11 @@
 import { apiClient } from "@/lib/api-client";
 
-export function followUser(userId: number) {
-  return apiClient(`/follow/${userId}/`, { method: "POST" });
+export async function followUser(userId: number) {
+  const { data } = await apiClient.post(`/follow/${userId}/`);
+  return data;
 }
 
-export function unfollowUser(userId: number) {
-  return apiClient(`/follow/${userId}/`, { method: "DELETE" });
+export async function unfollowUser(userId: number) {
+  const { data } = await apiClient.delete(`/follow/${userId}/`);
+  return data;
 }

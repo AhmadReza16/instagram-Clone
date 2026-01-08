@@ -1,9 +1,11 @@
 import { apiClient } from "@/lib/api-client";
 
-export function fetchHighlights(username: string) {
-  return apiClient(`/stories/highlights/${username}/`);
+export async function fetchHighlights(username: string) {
+  const { data } = await apiClient.get(`/stories/highlights/${username}/`);
+  return data;
 }
 
-export function fetchHighlightDetail(id: number) {
-  return apiClient(`/stories/highlights/${id}/`);
+export async function fetchHighlightDetail(id: number) {
+  const { data } = await apiClient.get(`/stories/highlights/${id}/`);
+  return data;
 }

@@ -1,9 +1,11 @@
 import { apiClient } from "@/lib/api-client";
 
-export function savePost(postId: number) {
-  return apiClient(`/posts/${postId}/save/`, { method: "POST" });
+export async function savePost(postId: number) {
+  const { data } = await apiClient.post(`/posts/${postId}/save/`);
+  return data;
 }
 
-export function unsavePost(postId: number) {
-  return apiClient(`/posts/${postId}/save/`, { method: "DELETE" });
+export async function unsavePost(postId: number) {
+  const { data } = await apiClient.delete(`/posts/${postId}/save/`);
+  return data;
 }

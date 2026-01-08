@@ -1,16 +1,16 @@
 import { apiClient } from "@/lib/api-client";
 
-export function fetchThreads() {
-  return apiClient("/messages/threads/");
+export async function fetchThreads() {
+  const { data } = await apiClient.get("/messages/threads/");
+  return data;
 }
 
-export function fetchMessages(threadId: number) {
-  return apiClient(`/messages/threads/${threadId}/`);
+export async function fetchMessages(threadId: number) {
+  const { data } = await apiClient.get(`/messages/threads/${threadId}/`);
+  return data;
 }
 
-export function sendMessage(threadId: number, content: string) {
-  return apiClient(`/messages/threads/${threadId}/send/`, {
-    method: "POST",
-    body: JSON.stringify({ content }),
-  });
+export async function sendMessage(threadId: number, content: string) {
+  const { data } = await apiClient.post(`/messages/threads/${threadId}/send/`, { content });
+  return data;
 }
