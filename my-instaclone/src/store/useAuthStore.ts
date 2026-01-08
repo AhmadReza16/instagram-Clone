@@ -14,6 +14,7 @@ interface AuthState {
   refresh: string | null;
   loading: boolean;
   error: string | null;
+  isInitialized: boolean;
 
   initialize: () => void;
   login: (data: LoginPayload) => Promise<void>;
@@ -27,9 +28,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   refresh: null,
   loading: false,
   error: null,
+  isInitialized: false,
 
   // بازیابی توکن‌ها هنگام رفرش صفحه
   initialize: () => {
+    // فقط client side میں execute کریں
+    if (typeof window === "undefined") return;
+    
     const access = localStorage.getItem("access");
     const refresh = localStorage.getItem("refresh");
     const user = localStorage.getItem("user");
@@ -39,7 +44,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         access,
         refresh,
         user: user ? JSON.parse(user) : null,
+        isInitialized: true,
       });
+    } else {
+      set({ isInitialized: true });
     }
   },
 
@@ -116,3 +124,4 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
   },
 }));
+
