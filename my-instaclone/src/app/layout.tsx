@@ -4,6 +4,7 @@ import "./globals.css";
 import ReactQueryProvider from "../providers/ReactQueryProvider";
 import Header from "../components/ui/Header";
 import Toast from "@/components/ui/toast";
+import { AuthInitializer } from "@/components/AuthInitializer";
 
 export const metadata: Metadata = {
   title: "Instagram",
@@ -17,10 +18,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-white text-gray-900">
         <ReactQueryProvider>
+          <AuthInitializer />
           <Header />
-          <main className="max-w-3xl mx-auto">{children}</main>
+          {children}
           <Toast />
         </ReactQueryProvider>
       </body>
