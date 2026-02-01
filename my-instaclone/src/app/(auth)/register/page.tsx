@@ -3,7 +3,6 @@
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { register } from "@/services/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -11,26 +10,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const setAuth = useAuthStore((s) => s.setAuth);
+  const register = useAuthStore((s) => s.register);
+  const loading = useAuthStore((s) => s.loading);
+  const error = useAuthStore((s) => s.error);
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
+    setLocalError(null);
     try {
       await register({ username, email, password });
-      setAuth(data.user);
-      router.replace("/login");
+      router.replace("/feed");
     } catch (err: any) {
-      setError("Registration failed. Please try again.");
-    } finally {
-      setLoading(false);
+      setLocalError("Registration failed. Please try again.");
     }
   };
 
@@ -76,10 +72,11 @@ export default function RegisterPage() {
               />
             </div>
 
-            {error && <p className="text-sm text-red-500">{error}</p>}
+            {(error || localError) && (
+              <p className="text-sm text-red-500">{error || localError}</p>
+            )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              Create Account
               {loading ? "Creating account..." : "Register"}
             </Button>
           </form>

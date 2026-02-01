@@ -3,7 +3,6 @@
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login } from "@/services/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/store/useAuthStore";
@@ -11,26 +10,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function LoginPage() {
   const router = useRouter();
-  const setAuth = useAuthStore((s) => s.setAuth);
+  const login = useAuthStore((s) => s.login);
+  const loading = useAuthStore((s) => s.loading);
+  const error = useAuthStore((s) => s.error);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [localError, setLocalError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null);
+    setLocalError("");
 
     try {
-      const data = await login({ email, password });
-      setAuth(data.user);
+      await login({ email, password });
       router.replace("/feed");
     } catch (err: any) {
-      setError("Login failed. Please check your credentials.");
-    } finally {
-      setLoading(false);
+      setLocalError("Login failed. Please check your credentials.");
     }
   };
 
@@ -64,9 +60,10 @@ export default function LoginPage() {
                 required
               />
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+            {(error || localError) && (
+              <p className="text-red-500 text-sm">{error || localError}</p>
+            )}
             <Button type="submit" className="w-full" disabled={loading}>
-              Login
               {loading ? "Logging in..." : "Login"}
             </Button>
           </form>
