@@ -1,8 +1,12 @@
 
 
-django 
-djangorestframework
-django-cors-headers 
-Pillow
-djangorestframework-simplejwt
-channels channels-redis
+Django==5.1.4
+djangorestframework==3.14.0
+django-cors-headers==4.3.1
+Pillow==10.1.0
+djangorestframework-simplejwt==5.3.2
+channels==4.0.0
+channels-redis==4.1.0
+python-decouple==3.8
+python-multipart==0.0.6
+drf-spectacular==0.27.0
