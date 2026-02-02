@@ -1,8 +1,10 @@
 venv
 List-app.md
 .env
+.env.example
 __pycache__/
 .vscode/
 Main-structure.txt
 root.txt
 level_biulder.txt
+media/

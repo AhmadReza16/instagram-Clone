@@ -38,6 +38,25 @@ export async function getFeedPosts(
   }
 }
 
+export async function getSuggestedPosts(
+  params: GetFeedPostsParams = {}
+): Promise<FeedPostsResponse> {
+  try {
+    const page = params.page ?? 1;
+
+    const response = await apiClient.get("posts/suggested/", {
+      params: { page },
+    });
+
+    return {
+      results: response.data.results,
+      nextPage: response.data.next ? page + 1 : null,
+    };
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function getCommentsByPost(id: string) {
   try {
     const res = await apiClient.get(`posts/${id}/comments/`);
