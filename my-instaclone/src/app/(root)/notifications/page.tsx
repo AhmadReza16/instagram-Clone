@@ -16,7 +16,11 @@ export default function NotificationsPage() {
     try {
       setLoading(true);
       const res = await getNotifications();
-      setData(res);
+      // Handle response - might be array or object with results key
+      const notifications = Array.isArray(res)
+        ? res
+        : res?.results || res?.data || [];
+      setData(notifications);
       setError(false);
     } catch {
       setError(true);

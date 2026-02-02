@@ -1,6 +1,9 @@
+"use client";
+
 import { PostSkeleton } from "@/components/skeletons/PostSkeleton";
 import { ErrorState } from "@/components/states/ErrorState";
 import StoryDetail from "@/components/stories/StoryDetail";
+import { usePost } from "@/hooks/usePost";
 
 interface Props {
   params: {
@@ -8,10 +11,13 @@ interface Props {
   };
 }
 
-export default function StoryDetailPage({ params }: Props) {
+export default function PostDetailPage({ params }: Props) {
+  const { post, loading: loadingPost, error: errorPost } = usePost(params.id);
+
   if (loadingPost) {
     return <PostSkeleton />;
   }
+
   if (errorPost) {
     return (
       <ErrorState
@@ -20,6 +26,7 @@ export default function StoryDetailPage({ params }: Props) {
       />
     );
   }
+
   return (
     <main className="max-w-2xl mx-auto py-10 px-4">
       <StoryDetail storyId={params.id} />
