@@ -3,55 +3,67 @@
 import { FeedSkeleton } from "@/components/skeletons/FeedSkeleton";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
+import { DiscoverBanner } from "@/components/discover/DiscoverBanner";
 import { usePosts } from "@/hooks/usePosts";
 import { useStories } from "@/hooks/useStories";
 import StoryFeed from "@/components/stories/StoryFeed";
 import { PostCard } from "@/components/posts/PostCard";
 
-import { useState, useEffect, Fragment } from "react";
+import { Fragment, useState } from "react";
 
 export default function FeedPage() {
+  // حالت: feed یا suggested
+  const [showSuggested, setShowSuggested] = useState(false);
+
   const {
-    posts,
-    isLoading: postsLoading,
-    isError: postsError,
+    posts: feedPosts,
+    isLoading: feedLoading,
+    isError: feedError,
   } = usePosts({ type: "feed" });
+
+  const {
+    posts: suggestedPosts,
+    isLoading: suggestedLoading,
+    isError: suggestedError,
+  } = usePosts({ type: "suggested" });
 
   const {
     stories,
     isLoading: storiesLoading,
     isError: storiesError,
   } = useStories({ type: "feed" });
-  const [loading, setLoading] = useState(true); // ← تعریف کن
-  const [data, setData] = useState(null);
 
-  useEffect(() => {
-    // فچ داده‌ها
-    fetch("/api/feed")
-      .then((res) => res.json())
-      .then((data) => {
-        setData(data);
-        setLoading(false); // بعد از دریافت، false کن
-      });
-  }, []);
+  // اگر feed خالی است، automatic طور suggested posts نشان بده
+  const feedPostsExists = feedPosts && feedPosts.length > 0;
+  const suggestedPostsExists = suggestedPosts && suggestedPosts.length > 0;
 
-  if (loading) {
+  const posts = feedPostsExists
+    ? feedPosts
+    : suggestedPostsExists
+      ? suggestedPosts
+      : [];
+  const postsLoading = !feedPostsExists ? suggestedLoading : feedLoading;
+  const postsError = !feedPostsExists ? suggestedError : feedError;
+  const hasFeedPosts = feedPostsExists;
+
+  if (postsLoading) {
     return <FeedSkeleton />;
   }
+
+  if (postsError) {
+    return (
+      <ErrorState
+        title="Failed to load feed"
+        description="We couldn't fetch posts. Check your internet connection."
+      />
+    );
+  }
+
   if (posts.length === 0) {
     return (
       <EmptyState
         title="No posts yet"
         description="Follow people to see their posts here."
-      />
-    );
-  }
-  if (error) {
-    return (
-      <ErrorState
-        title="Failed to load feed"
-        description="We couldn’t fetch posts. Check your internet connection."
-        onRetry={refetch}
       />
     );
   }
@@ -72,6 +84,11 @@ export default function FeedPage() {
           <StoryFeed stories={stories} />
         )}
       </section>
+
+      {/* DISCOVER BANNER - اگر suggested posts نمایش داده شود */}
+      {!hasFeedPosts && suggestedPosts.length > 0 && (
+        <DiscoverBanner showFollow={true} />
+      )}
 
       {/* POSTS */}
       <section className="space-y-6">
@@ -94,8 +111,18 @@ export default function FeedPage() {
 
         {!postsLoading &&
           !postsError &&
+          posts &&
           posts.length > 0 &&
-          posts.map((post) => <PostCard key={post.id} post={post} />)}
+          posts.map((post) => {
+            if (!post) return null;
+            // Ensure post has required image field
+            const postWithImage = {
+              ...post,
+              image:
+                post.image || post.images?.[0]?.image || "/placeholder.png",
+            };
+            return <PostCard key={post.id} post={postWithImage} />;
+          })}
       </section>
     </main>
   );
