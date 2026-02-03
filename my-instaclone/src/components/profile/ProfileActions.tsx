@@ -5,17 +5,22 @@ import { useAuth } from "@/hooks/useAuth";
 import { useFollow } from "@/hooks/useFollow";
 
 export function ProfileActions({ profile }: { profile: any }) {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
+
+  // Always call hooks in the same order - never conditionally
+  const { isFollowing, toggleFollow } = useFollow(
+    profile.id,
+    profile.is_following,
+    profile.followers_count,
+  );
+
+  if (loading) {
+    return <Button disabled>Loading...</Button>;
+  }
 
   if (user?.username === profile.username) {
     return <Button>Edit Profile</Button>;
   }
-
-  const { isFollowing, toggleFollow } = useFollow(
-    profile.id,
-    profile.is_following,
-    profile.followers_count
-  );
 
   return (
     <Button

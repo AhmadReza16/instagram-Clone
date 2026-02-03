@@ -5,6 +5,9 @@ interface StoryPreviewProps {
 }
 
 export function StoryPreview({ mediaUrl }: StoryPreviewProps) {
+  if (!mediaUrl)
+    return <div className="aspect-9/16 rounded-lg overflow-hidden bg-black" />;
+
   return (
     <div className="aspect-9/16 rounded-lg overflow-hidden bg-black">
       <Image src={mediaUrl} alt="story preview" fill className="object-cover" />

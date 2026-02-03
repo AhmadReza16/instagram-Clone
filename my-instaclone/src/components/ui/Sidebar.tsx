@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Home,
   Search,
@@ -17,11 +17,28 @@ import {
 
 const Sidebar = () => {
   const pathname = usePathname();
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const handleLogout = async () => {
+    try {
+      // حذف tokens و user data
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+      localStorage.removeItem("user");
+
+      // منتقل شدن به login page
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setShowConfirm(false);
+    }
+  };
 
   const navigationItems = [
     {
-      label: "feed",
+      label: "Home",
       icon: Home,
       href: "/feed",
     },
@@ -129,11 +146,38 @@ const Sidebar = () => {
 
         {/* Logout Button */}
         <div className="absolute bottom-0 left-0 right-0 p-4 xl:p-6 border-t border-gray-800">
-          <button className="flex items-center gap-4 w-full px-4 py-3 rounded-lg text-gray-500 hover:text-white hover:bg-gray-900 transition-all duration-200">
+          <button
+            onClick={() => setShowConfirm(true)}
+            className="flex items-center gap-4 w-full px-4 py-3 rounded-lg text-gray-500 hover:text-white hover:bg-gray-900 transition-all duration-200"
+          >
             <LogOut size={24} />
             <span className="hidden xl:inline text-base">Log Out</span>
           </button>
         </div>
+
+        {/* Logout Confirmation Modal */}
+        {showConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-gray-900 rounded-lg p-6 w-80 shadow-lg border border-gray-800">
+              <h2 className="text-xl font-semibold text-white mb-2">Logout</h2>
+              <p className="text-gray-400 mb-6"> Are You Sure?</p>
+              <div className="flex gap-3 justify-end">
+                <button
+                  onClick={() => setShowConfirm(false)}
+                  className="px-4 py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition-colors"
+                >
+                  No
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
+                >
+                  Yes
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </aside>
     </>
   );
