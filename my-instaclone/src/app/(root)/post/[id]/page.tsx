@@ -3,7 +3,7 @@
 import { PostSkeleton } from "@/components/skeletons/PostSkeleton";
 import { ErrorState } from "@/components/states/ErrorState";
 import StoryDetail from "@/components/stories/StoryDetail";
-import { usePost } from "@/hooks/usePost";
+import { usePosts } from "@/hooks/usePosts";
 
 interface Props {
   params: {
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export default function PostDetailPage({ params }: Props) {
-  const { post, loading: loadingPost, error: errorPost } = usePost(params.id);
+  const { post, loading: loadingPost, error: errorPost } = usePosts(params.id);
 
   if (loadingPost) {
     return <PostSkeleton />;

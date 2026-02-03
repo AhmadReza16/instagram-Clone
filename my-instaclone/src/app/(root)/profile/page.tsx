@@ -70,7 +70,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-gray-900 text-white m-10 space-y-6">
       {/* Profile Header */}
       <ProfileHeader profile={profile} />
 

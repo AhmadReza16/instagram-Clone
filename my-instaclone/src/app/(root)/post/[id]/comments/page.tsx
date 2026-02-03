@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { getPostById, getCommentsByPost } from "@/services/posts";
 import { PostCard } from "@/components/posts/PostCard";
 import { CommentItem } from "@/components/comments/CommentItem";
-import { CommentForm } from "@/components/comments/CommentForm";
+import CommentForm from "@/components/comments/CommentForm";
 import { PostSkeleton } from "@/components/skeletons/PostSkeleton";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
