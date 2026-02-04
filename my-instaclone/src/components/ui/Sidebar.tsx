@@ -6,13 +6,14 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   Home,
   Search,
-  Compass,
   Heart,
   MessageCircle,
   BookmarkIcon,
   LogOut,
   Menu,
+  ImagePlus,
   X,
+  UserRoundPen,
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -53,9 +54,9 @@ const Sidebar = () => {
       href: "/explore",
     },
     {
-      label: "discover",
-      icon: Compass,
-      href: "/discover",
+      label: "create",
+      icon: ImagePlus,
+      href: "/create",
     },
     {
       label: "notifications",
@@ -70,7 +71,7 @@ const Sidebar = () => {
     },
     {
       label: "profile",
-      icon: Compass,
+      icon: UserRoundPen,
       href: "/profile",
     },
   ];
