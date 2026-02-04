@@ -10,6 +10,15 @@ interface GetFeedPostsParams {
   page?: number;
 }
 
+export async function createPost(id: string) {
+  try {
+    const res = await apiClient.get(`posts/`);
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
 export async function getPostById(id: string) {
   try {
     const res = await apiClient.get(`posts/${id}/`);
