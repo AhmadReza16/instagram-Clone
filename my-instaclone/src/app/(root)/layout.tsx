@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import Sidebar from "@/components/ui/Sidebar";
 
@@ -17,9 +16,9 @@ export default async function RootLayout({ children }: RootLayoutProps) {
   } catch (error) {}
 
   return (
-    <div className="flex min-h-screen bg-gray-900 text-white">
+    <div className="flex h-screen bg-gray-900 overflow-hidden">
       <Sidebar />
-      <main className="flex-1 lg:ml-0">{children}</main>
+      <main className="flex-1 overflow-y-auto">{children}</main>
     </div>
   );
 }
