@@ -32,7 +32,8 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
-    # برای ایجاد پست اجازه می‌دهیم فایل‌های تصویر به صورت لیست ارسال شوند
+    # برای ایجاد پست اجازه می‌دهیم فایل‌های تصویر به صورت لیست یا تکی ارسال شوند
+    image = serializers.ImageField(write_only=True, required=False)
     images = serializers.ListField(
         child=serializers.ImageField(),
         write_only=True,
@@ -46,7 +47,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Post
-        fields = ('caption', 'location', 'images', 'hashtags')
+        fields = ('caption', 'location', 'image', 'images', 'hashtags')
 
     def _get_or_create_hashtags(self, names):
         hashtags = []
@@ -60,13 +61,22 @@ class PostCreateSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def create(self, validated_data):
+        # Handle both single image and multiple images
         images = validated_data.pop('images', [])
+        single_image = validated_data.pop('image', None)
         hashtag_names = validated_data.pop('hashtags', [])
         user = self.context['request'].user
+        
         post = Post.objects.create(user=user, **validated_data)
 
+        # Combine single image with multiple images
+        all_images = []
+        if single_image:
+            all_images.append(single_image)
+        all_images.extend(images)
+
         # create images
-        for idx, img in enumerate(images):
+        for idx, img in enumerate(all_images):
             PostImage.objects.create(post=post, image=img, order=idx)
 
         # hashtags

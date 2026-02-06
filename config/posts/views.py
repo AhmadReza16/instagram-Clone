@@ -24,7 +24,7 @@ class PostListCreateView(generics.ListCreateAPIView):
         return PostSerializer
 
     def perform_create(self, serializer):
-        return serializer.save()
+        serializer.save(user=self.request.user)
 
 
 # Retrieve / Delete a single post

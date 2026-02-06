@@ -18,7 +18,7 @@ class Post(models.Model):
     hashtags = models.ManyToManyField('Hashtag', blank=True, related_name='posts')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
-
+    
     
     class Meta:
         ordering = ['-created_at']
