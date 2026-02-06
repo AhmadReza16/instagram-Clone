@@ -10,9 +10,13 @@ interface GetFeedPostsParams {
   page?: number;
 }
 
-export async function createPost(id: string) {
+export async function createPost(formData: FormData) {
   try {
-    const res = await apiClient.get(`posts/`);
+    const res = await apiClient.post(`posts/`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     return res.data;
   } catch (error) {
     throw error;
