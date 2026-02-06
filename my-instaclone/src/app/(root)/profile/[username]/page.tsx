@@ -29,26 +29,49 @@ export default function ProfilePage({
   if (errorProfile) {
     return (
       <ErrorState
-        title="Profile not found"
-        description="This user may not exist or is private."
+        title="User not found"
+        description="This user may not exist or their profile is private."
       />
     );
   }
 
-  if (!profile || !profile.posts || profile.posts.length === 0) {
+  if (!profile) {
     return (
-      <EmptyState
-        title="No posts yet"
-        description="When this user posts, you'll see it here."
+      <ErrorState
+        title="Profile unavailable"
+        description="Unable to load this profile."
       />
     );
   }
+
   return (
-    <div className="max-w-4xl mx-auto px-4">
-      <ProfileHeader profile={profile} />
-      <HighlightBar highlights={highlights} onOpen={open} />
-      <HighlightViewer highlight={active} onClose={close} />
-      <ProfilePostsGrid posts={profile.posts} />
+    <div className="w-full max-w-5xl mx-auto">
+      {/* Profile Header */}
+      <div className="px-4 md:px-0">
+        <ProfileHeader profile={profile} />
+      </div>
+
+      {/* Highlights Section */}
+      {highlights && highlights.length > 0 && (
+        <div className="px-4 md:px-0">
+          <HighlightBar highlights={highlights} onOpen={open} />
+          <HighlightViewer highlight={active} onClose={close} />
+        </div>
+      )}
+
+      {/* Posts Grid or Empty State */}
+      {!profile.posts || profile.posts.length === 0 ? (
+        <div className="mt-12 border-t border-gray-800 pt-12">
+          <EmptyState
+            title="No posts yet"
+            description="This user hasn't shared any posts yet."
+          />
+        </div>
+      ) : (
+        <div className="px-4 md:px-0">
+          <ProfilePostsGrid posts={profile.posts} />
+        </div>
+      )}
     </div>
   );
 }

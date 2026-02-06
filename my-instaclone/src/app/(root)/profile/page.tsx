@@ -1,90 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ProfileHeader } from "@/components/profile/ProfileHeader";
-import { ProfileStats } from "@/components/profile/ProfileStats";
-import { ProfilePostsGrid } from "@/components/profile/ProfilePostsGrid";
-import { FeedSkeleton } from "@/components/skeletons/FeedSkeleton";
-import { EmptyState } from "@/components/states/EmptyState";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
 
-export default function ProfilePage() {
+/**
+ * Redirect to current user's profile
+ * This is the default profile page when no username is provided
+ */
+export default function ProfileIndexPage() {
   const router = useRouter();
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        setLoading(true);
-        // Get current user from localStorage or API
-        const token = localStorage.getItem("access");
-        if (!token) {
-          router.push("/auth/login");
-          return;
-        }
-
-        // Fetch current user profile
-        // You can replace this with your actual API call
-        // For now, we'll show a placeholder
-        setProfile({
-          id: 1,
-          username: "current_user",
-          bio: "Your bio here",
-          profile_picture: null,
-          followers_count: 0,
-          following_count: 0,
-          posts: [],
-        });
-        setError(false);
-      } catch (err) {
-        setError(true);
-        console.error("Failed to load profile:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserProfile();
-  }, [router]);
-
-  if (loading) return <FeedSkeleton />;
-
-  if (error) {
-    return (
-      <EmptyState
-        title="Failed to load profile"
-        description="Please try again later"
-      />
-    );
-  }
-
-  if (!profile) {
-    return (
-      <EmptyState
-        title="Profile not found"
-        description="Please log in to view your profile"
-      />
-    );
-  }
+    if (!loading && user?.username) {
+      router.replace(`/profile/${user.username}`);
+    }
+  }, [user, loading, router]);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white m-10 space-y-6">
-      {/* Profile Header */}
-      <ProfileHeader profile={profile} />
-
-      {/* Stats Section */}
-      <ProfileStats profile={profile} />
-
-      {/* Posts Grid */}
-      {profile.posts && profile.posts.length > 0 ? (
-        <ProfilePostsGrid posts={profile.posts} />
-      ) : (
-        <div className="text-center py-12">
-          <p className="text-gray-500">No posts yet</p>
-        </div>
-      )}
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-400 mx-auto mb-4"></div>
+        <p className="text-gray-400">Loading your profile...</p>
+      </div>
     </div>
   );
 }
