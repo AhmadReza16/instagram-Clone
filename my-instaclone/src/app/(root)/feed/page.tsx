@@ -69,61 +69,68 @@ export default function FeedPage() {
   }
 
   return (
-    <main className="max-w-2xl mx-auto px-4 py-6">
-      {/* STORIES */}
-      <section className="mb-6">
-        {storiesLoading && (
-          <div className="h-24 rounded-xl bg-muted animate-pulse" />
+    <main className="min-h-screen bg-black">
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        {/* STORIES */}
+        <section className="mb-8">
+          {storiesLoading && (
+            <div className="h-24 rounded-xl bg-gray-900 animate-pulse" />
+          )}
+
+          {storiesError && (
+            <div className="bg-red-900 border border-red-700 rounded-lg p-3 text-sm text-red-200">
+              Failed to load stories
+            </div>
+          )}
+
+          {!storiesLoading && !storiesError && stories.length > 0 && (
+            <StoryFeed stories={stories} />
+          )}
+        </section>
+
+        {/* DISCOVER BANNER - if showing suggested posts */}
+        {!hasFeedPosts && suggestedPosts.length > 0 && (
+          <DiscoverBanner showFollow={true} />
         )}
 
-        {storiesError && (
-          <p className="text-sm text-destructive">Failed to load stories</p>
-        )}
+        {/* POSTS */}
+        <section className="space-y-6">
+          {postsLoading && (
+            <Fragment>
+              <div className="h-96 rounded-xl bg-gray-900 animate-pulse" />
+              <div className="h-96 rounded-xl bg-gray-900 animate-pulse" />
+            </Fragment>
+          )}
 
-        {!storiesLoading && !storiesError && stories.length > 0 && (
-          <StoryFeed stories={stories} />
-        )}
-      </section>
+          {postsError && (
+            <div className="bg-red-900 border border-red-700 rounded-lg p-4 text-sm text-red-200">
+              Failed to load posts. Please try again later.
+            </div>
+          )}
 
-      {/* DISCOVER BANNER - اگر suggested posts نمایش داده شود */}
-      {!hasFeedPosts && suggestedPosts.length > 0 && (
-        <DiscoverBanner showFollow={true} />
-      )}
+          {!postsLoading && !postsError && posts.length === 0 && (
+            <EmptyState
+              title="No posts to show"
+              description="Follow more people to see their posts in your feed"
+            />
+          )}
 
-      {/* POSTS */}
-      <section className="space-y-6">
-        {postsLoading && (
-          <Fragment>
-            <div className="h-96 rounded-xl bg-muted animate-pulse" />
-            <div className="h-96 rounded-xl bg-muted animate-pulse" />
-          </Fragment>
-        )}
-
-        {postsError && (
-          <p className="text-sm text-destructive">Failed to load posts</p>
-        )}
-
-        {!postsLoading && !postsError && posts.length === 0 && (
-          <p className="text-sm text-muted-foreground text-center">
-            No posts to show
-          </p>
-        )}
-
-        {!postsLoading &&
-          !postsError &&
-          posts &&
-          posts.length > 0 &&
-          posts.map((post) => {
-            if (!post) return null;
-            // Ensure post has required image field
-            const postWithImage = {
-              ...post,
-              image:
-                post.image || post.images?.[0]?.image || "/placeholder.png",
-            };
-            return <PostCard key={post.id} post={postWithImage} />;
-          })}
-      </section>
+          {!postsLoading &&
+            !postsError &&
+            posts &&
+            posts.length > 0 &&
+            posts.map((post) => {
+              if (!post) return null;
+              // Ensure post has required image field
+              const postWithImage = {
+                ...post,
+                image:
+                  post.image || post.images?.[0]?.image || "/placeholder.png",
+              };
+              return <PostCard key={post.id} post={postWithImage} />;
+            })}
+        </section>
+      </div>
     </main>
   );
 }
