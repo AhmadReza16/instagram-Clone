@@ -15,7 +15,9 @@ urlpatterns = [
     path('highlight/create/', CreateHighlightView.as_view()),
     path('highlight/<int:highlight_id>/<int:story_id>/add/', AddStoryToHighlightView.as_view()),
     path('highlight/<int:highlight_id>/<int:story_id>/remove/', RemoveStoryFromHighlightView.as_view()),
+
     path('story/<int:story_id>/seen/', ViewStoryAPIView.as_view()),
     path('story/<int:story_id>/', ViewStoryAPIView.as_view()),
+    # feed
     path('feed/', StoryFeedView.as_view()),
 ]
