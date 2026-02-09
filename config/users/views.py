@@ -5,8 +5,10 @@ from django.contrib.auth import get_user_model
 from .serializers import (
     CountSerializer,RegisterSerializer,UserSerializer,
     MyTokenObtainPairSerializer ,ProfileSerializer,UpdateProfileSerializer,
-    FollowerSerializer, FollowingSerializer, IsFollowingSerializer, PostsCountSerializer )
+    FollowerSerializer, FollowingSerializer, IsFollowingSerializer, PostsCountSerializer 
+    ,UserProfileSerializer)
 
+from .models import Profile
 from rest_framework import generics, status, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -55,7 +57,7 @@ class LogoutView(APIView):
         
 
 # سایر ویوها برای پروفایل کاربر، دنبال کردن و ... بعدا اضافه شوند.
-class CurrentUserView(generics.RetrieveUpdateAPIView):
+class CurrentProfileUserView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticated,)
@@ -127,3 +129,25 @@ class UpdateProfileView(generics.UpdateAPIView):
             return Response({"detail": "You do not have permission to update this profile."}, status=status.HTTP_403_FORBIDDEN)
         return self.update(request, *args, **kwargs)
     
+
+class MyProfileView(generics.RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self):
+        profile, _ = Profile.objects.get_or_create(user=self.request.user)
+        return profile
+
+    def patch(self, request, *args, **kwargs):
+        self.serializer_class = UpdateProfileSerializer
+        return super().patch(request, *args, **kwargs)
+    
+class UserProfileView(generics.RetrieveAPIView):
+    serializer_class = ProfileSerializer
+    permission_classes = (AllowAny,)
+
+    def get_object(self):
+        username = self.kwargs['username']
+        user = generics.get_object_or_404(User, username=username)
+        profile, _ = Profile.objects.get_or_create(user=user)
+        return profile

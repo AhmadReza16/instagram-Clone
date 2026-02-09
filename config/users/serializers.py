@@ -43,16 +43,30 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 # سایر سریالایزرها برای پروفایل کاربر، دنبال‌کنندگان و ... باید اضافه شوند.
 
+from .models import Profile
+
 class ProfileSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+    email = serializers.EmailField(source='user.email', read_only=True)
+
     class Meta:
-        model = User
-        fields = ('id', 'username', 'bio', 'profile_image')
-        read_only_fields = ('id', 'username')
+        model = Profile
+        fields = (
+            'id',
+            'username',
+            'email',
+            'bio',
+            'website',
+            'avatar',
+            'created_at',
+        )
+        read_only_fields = ('id', 'username', 'email', 'created_at')
+
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ('bio', 'profile_image')
+        model = Profile
+        fields = ('bio', 'website', 'avatar')
         read_only_fields = ('username',)
 
         def update(self, instance, validated_data):
@@ -67,15 +81,37 @@ class FollowerSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'profile_image')
         read_only_fields = ('id', 'username', 'profile_image')
+        
 class FollowingSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('id', 'username', 'profile_image')
         read_only_fields = ('id', 'username', 'profile_image')
+
 class IsFollowingSerializer(serializers.Serializer):
     is_following = serializers.BooleanField()
+
 class CountSerializer(serializers.Serializer):
     count = serializers.IntegerField()
+
 class PostsCountSerializer(serializers.Serializer):
     posts_count = serializers.IntegerField()
 
+class UserProfileSerializer(serializers.ModelSerializer):
+    followers_count = serializers.SerializerMethodField()
+    following_count = serializers.SerializerMethodField()
+    posts_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'bio', 'profile_image', 'followers_count', 'following_count', 'posts_count')
+        read_only_fields = ('id', 'username', 'bio', 'profile_image')
+
+    def get_followers_count(self, obj):
+        return obj.followers.count()
+
+    def get_following_count(self, obj):
+        return obj.following.count()
+
+    def get_posts_count(self, obj):
+        return obj.posts.count()
