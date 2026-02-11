@@ -1,5 +1,6 @@
 "use client";
 
+import { PostCard } from "@/components/posts/PostCard";
 import { PostSkeleton } from "@/components/skeletons/PostSkeleton";
 import { ErrorState } from "@/components/states/ErrorState";
 import StoryDetail from "@/components/stories/StoryDetail";
@@ -30,6 +31,7 @@ export default function PostDetailPage({ params }: Props) {
   return (
     <main className="max-w-2xl mx-auto py-10 px-4">
       <StoryDetail storyId={params.id} />
+      <PostCard post={post} />
     </main>
   );
 }

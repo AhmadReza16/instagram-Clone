@@ -69,7 +69,7 @@ export default function FeedPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black">
+    <main className="min-h-screen bg-gray-900 py-6">
       <div className="max-w-2xl mx-auto px-4 py-6">
         {/* STORIES */}
         <section className="mb-8">

@@ -1,6 +1,8 @@
 "use client";
 
+import { use } from "react";
 import { useProfile } from "@/hooks/useProfile";
+import { useAuth } from "@/hooks/useAuth";
 import { ProfileHeader } from "@/components/profile/ProfileHeader";
 import { ProfilePostsGrid } from "@/components/profile/ProfilePostsGrid";
 import { useHighlights } from "@/hooks/useHighlights";
@@ -13,14 +15,21 @@ import { ErrorState } from "@/components/states/ErrorState";
 export default function ProfilePage({
   params,
 }: {
-  params: { username: string };
+  params: Promise<{ username: string }>;
 }) {
+  // Unwrap the params Promise using React.use()
+  const { username } = use(params);
+  const { user: currentUser } = useAuth();
+
   const {
     profile,
     loading: loadingProfile,
     error: errorProfile,
-  } = useProfile(params.username);
-  const { highlights, active, open, close } = useHighlights(params.username);
+  } = useProfile(username);
+  const { highlights, active, open, close } = useHighlights(username);
+
+  // Check if this is the current user's profile
+  const isOwnProfile = currentUser?.username === username;
 
   if (loadingProfile) {
     return <ProfileSkeleton />;
@@ -48,7 +57,7 @@ export default function ProfilePage({
     <div className="w-full max-w-5xl mx-auto">
       {/* Profile Header */}
       <div className="px-4 md:px-0">
-        <ProfileHeader profile={profile} />
+        <ProfileHeader profile={profile} isOwnProfile={isOwnProfile} />
       </div>
 
       {/* Highlights Section */}
@@ -64,7 +73,11 @@ export default function ProfilePage({
         <div className="mt-12 border-t border-gray-800 pt-12">
           <EmptyState
             title="No posts yet"
-            description="This user hasn't shared any posts yet."
+            description={
+              isOwnProfile
+                ? "Share your first post to get started!"
+                : "This user hasn't shared any posts yet."
+            }
           />
         </div>
       ) : (

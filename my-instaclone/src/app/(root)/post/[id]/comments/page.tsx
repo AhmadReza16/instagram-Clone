@@ -2,7 +2,8 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { getPostById, getCommentsByPost } from "@/services/posts";
+import { getPostById } from "@/services/posts";
+import { fetchComments } from "@/services/comments";
 import { PostCard } from "@/components/posts/PostCard";
 import { CommentItem } from "@/components/comments/CommentItem";
 import CommentForm from "@/components/comments/CommentForm";
@@ -21,7 +22,7 @@ export default function CommentsPage() {
     try {
       setLoading(true);
       const postData = await getPostById(id as string);
-      const commentsData = await getCommentsByPost(id as string);
+      const commentsData = await fetchComments(id as unknown as number);
       setPost(postData);
       setComments(commentsData);
       setError(false);
@@ -65,7 +66,7 @@ export default function CommentsPage() {
         </div>
       )}
 
-      <CommentForm postId={id as string} onSuccess={fetchData} />
+      <CommentForm postId={id as unknown as number} onSuccess={fetchData} />
     </div>
   );
 }

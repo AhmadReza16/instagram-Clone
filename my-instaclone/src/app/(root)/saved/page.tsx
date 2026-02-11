@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSavedPosts } from "@/services/posts";
+import { savePostlist } from "@/services/saves";
 import { PostCard } from "@/components/posts/PostCard";
 import { FeedSkeleton } from "@/components/skeletons/FeedSkeleton";
 import { EmptyState } from "@/components/states/EmptyState";
@@ -15,7 +15,7 @@ export default function SavedPostsPage() {
   const fetchSavedPosts = async () => {
     try {
       setLoading(true);
-      const data = await getSavedPosts();
+      const data = await savePostlist();
       setPosts(data);
       setError(false);
     } catch {

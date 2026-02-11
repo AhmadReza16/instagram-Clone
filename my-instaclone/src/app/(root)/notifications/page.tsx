@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getNotifications } from "@/services/notifications";
+import { fetchNotifications } from "@/services/notifications";
 import { NotificationItem } from "@/components/notifications/NotificationItem";
 import { FeedSkeleton } from "@/components/skeletons/FeedSkeleton";
 import { EmptyState } from "@/components/states/EmptyState";
@@ -15,7 +15,7 @@ export default function NotificationsPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await getNotifications();
+      const res = await fetchNotifications();
       // Handle response - might be array or object with results key
       const notifications = Array.isArray(res)
         ? res
