@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api-client";
 
 // like / unlike (toggle)
-export async function toggleLike(postId: number) {
+export async function toggleLiked(postId: number) {
   const { data } = await apiClient.post(`/likes/toggle/`, {
     post_id: postId,
   });

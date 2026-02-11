@@ -10,7 +10,7 @@ export async function unsavePost(postId: number) {
   return data;
 }
 
-export async function list() {
+export async function savePostlist() {
   const { data } = await apiClient.get(`/saved/list/`);
   return data;
 }

@@ -44,7 +44,7 @@ export async function SeenStory(id: number) {
 }
 
 
-export async function getStoryById(storyId: string) {
+export async function getStoryById(storyId: number) {
   const { data } = await apiClient.get(`/stories/${storyId}/`);
   return data;
 }

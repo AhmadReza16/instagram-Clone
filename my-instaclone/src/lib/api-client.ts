@@ -8,7 +8,7 @@ const apiClient = axios.create({
 // Add token to request headers
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access');
+    const token = localStorage.getItem('access_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -43,15 +43,15 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // اگر refresh endpoint خود 401 دے رہی ہے تو logout کریں
     if (originalRequest.url?.includes('/users/token/refresh/')) {
-      localStorage.removeItem('access');
-      localStorage.removeItem('refresh');
-      localStorage.removeItem('user');
+      localStorage.clear()
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
       return Promise.reject(error);
     }
 
-    // اگر 401 ہے اور ابھی refresh نہیں ہو رہی ہے
+
     if (error.response?.status === 401 && !isRefreshing) {
       isRefreshing = true;
 
