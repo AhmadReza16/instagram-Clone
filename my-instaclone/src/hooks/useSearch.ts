@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { searchAll } from "@/services/search";
+import { searchUsers } from "@/services/search";
 
 export function useSearch(query: string) {
   const [results, setResults] = useState<any>(null);
@@ -18,7 +18,7 @@ export function useSearch(query: string) {
     const timer = setTimeout(() => {
       setLoading(true);
       setError(null);
-      searchAll(query)
+      searchUsers(query)
         .then(setResults)
         .catch((err) => {
           setError(err.message || "Search failed");

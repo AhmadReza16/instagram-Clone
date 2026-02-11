@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { likePost, unlikePost } from "@/services/likes";
+import { toggleLiked } from "@/services/likes";
 
 export function useLike(
   postId: number,
@@ -16,7 +16,7 @@ export function useLike(
     setCount((c) => (liked ? c - 1 : c + 1));
 
     try {
-      liked ? await unlikePost(postId) : await likePost(postId);
+      liked ? await toggleLiked(postId)
     } catch {
       setLiked(liked);
       setCount(initialCount);

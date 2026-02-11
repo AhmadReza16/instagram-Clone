@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { followUser, unfollowUser } from "@/services/follow";
+import { toggleFollow} from "@/services/follow";
 
 export function useFollow(
   userId: number,
@@ -11,19 +11,20 @@ export function useFollow(
   const [isFollowing, setIsFollowing] = useState(initialFollowing);
   const [followers, setFollowers] = useState(initialCount);
 
-  const toggleFollow = async () => {
+  const ToggleFollow = async () => {
     setIsFollowing(!isFollowing);
     setFollowers((c) => (isFollowing ? c - 1 : c + 1));
 
     try {
       isFollowing
-        ? await unfollowUser(userId)
-        : await followUser(userId);
+        ? await toggleFollow(userId) // follow
+        : await toggleFollow(userId); // unfollow
+        
     } catch {
       setIsFollowing(initialFollowing);
       setFollowers(initialCount);
     }
   };
 
-  return { isFollowing, followers, toggleFollow };
+  return { isFollowing, followers, ToggleFollow };
 }

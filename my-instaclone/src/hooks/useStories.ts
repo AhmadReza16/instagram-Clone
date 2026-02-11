@@ -21,7 +21,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { getFeedStories } from '@/services/stories';
-import { Story } from '@/types/story.d';
+
 
 interface UseStoriesOptions {
   type?: 'feed' | 'profile';
