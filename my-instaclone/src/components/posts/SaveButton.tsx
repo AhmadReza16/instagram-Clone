@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { savePost, unsavePost } from "@/services/posts";
+import { savePost, unsavePost } from "@/services/saves";
 import { Bookmark } from "lucide-react";
 
 interface Props {

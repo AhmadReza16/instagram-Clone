@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchStories } from "@/services/stories";
+import { getStoryById } from "@/services/stories";
 import { StoryAvatar } from "./StoryAvatar";
 import { useStoryStore } from "@/store/useStoryStore";
 
@@ -10,7 +10,7 @@ export function StoryBar() {
   const open = useStoryStore((s) => s.open);
 
   useEffect(() => {
-    fetchStories().then(setStories);
+    getStoryById().then(setStories);
   }, []);
 
   return (

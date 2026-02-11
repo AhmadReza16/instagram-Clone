@@ -1,4 +1,3 @@
-import React from "react";
 import { Sparkles, Heart, Users } from "lucide-react";
 
 interface DiscoverBannerProps {

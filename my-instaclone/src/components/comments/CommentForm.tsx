@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { addComment } from "@/services/posts";
+import { createComment } from "@/services/comments";
 
 interface Props {
-  postId: string;
-  onAddOptimistic: (comment: any) => void;
+  postId: number;
+  onAddOptimistic: (comment: string) => void;
   onRollback: (tempId: string) => void;
 }
 
@@ -35,7 +35,7 @@ export default function CommentForm({
     setLoading(true);
 
     try {
-      const realComment = await addComment(postId, content);
+      const realComment = await createComment(postId, content);
       onRollback(tempId);
       onAddOptimistic(realComment);
     } catch {

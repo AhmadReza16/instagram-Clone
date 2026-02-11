@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { likePost, unlikePost } from "@/services/posts";
+import { toggleLiked } from "@/services/likes";
 import { Heart } from "lucide-react";
 
 interface Props {
-  postId: string;
+  postId: number;
   initialLiked: boolean;
   initialLikesCount: number;
 }
@@ -30,9 +30,7 @@ export default function PostActions({
 
     try {
       if (!isLiked) {
-        await likePost(postId);
-      } else {
-        await unlikePost(postId);
+        await toggleLiked(postId);
       }
     } catch (err) {
       // rollback
