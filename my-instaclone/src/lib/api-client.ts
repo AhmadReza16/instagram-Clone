@@ -8,11 +8,13 @@ const apiClient = axios.create({
 // Add token to request headers
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access_token');
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("access");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    return config;
+  }
+  return config;
   },
   (error) => Promise.reject(error)
 );
@@ -52,20 +54,15 @@ apiClient.interceptors.response.use(
     }
 
 
-    if (error.response?.status === 401 && !isRefreshing) {
+    if (error.response?.status === 401 && !originalRequest._retry && !isRefreshing) {
+      originalRequest._retry = true;
       isRefreshing = true;
 
       try {
         const refresh = localStorage.getItem('refresh');
-        
-        if (!refresh) {
-          // Refresh token موجود نہیں ہے - logout کریں
-          localStorage.removeItem('access');
-          localStorage.removeItem('user');
-          return Promise.reject(error);
-        }
 
-        // Create a new request without interceptor
+        if (!refresh) throw new Error("No refresh token");
+
         const response = await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api"}/users/token/refresh/`,
           { refresh },
@@ -73,21 +70,23 @@ apiClient.interceptors.response.use(
         );
 
         const newAccessToken = response.data.access;
+
         localStorage.setItem('access', newAccessToken);
 
         apiClient.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 
         processQueue(null, newAccessToken);
+
         return apiClient(originalRequest);
-      } catch (refreshError) {
+      } catch (err) {
         localStorage.removeItem('access');
         localStorage.removeItem('refresh');
-        localStorage.removeItem('user');
-        processQueue(refreshError, null);
-        return Promise.reject(refreshError);
+        processQueue(err, null);
+        return Promise.reject(err);
       }
     }
+
 
     // اگر پہلے سے refresh ہو رہی ہے تو queue میں ڈالیں
     if (error.response?.status === 401 && isRefreshing) {
