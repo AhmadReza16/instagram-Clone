@@ -48,7 +48,6 @@ class PostCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ('caption', 'image', 'images', 'hashtags')
-        exclude = ('user',)
         
     def _get_or_create_hashtags(self, names):
         hashtags = []
