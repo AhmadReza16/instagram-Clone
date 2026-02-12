@@ -69,7 +69,7 @@ export default function LoginPage() {
           </form>
 
           <p className="text-center text-sm text-gray-500 mt-4">
-            No account?
+            Create account?
             <a href="/register" className="underline ml-1">
               Register
             </a>

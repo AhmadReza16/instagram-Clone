@@ -37,6 +37,10 @@ export async function removeStoryFromHighlight(highlightId: number, storyId: num
   return data;
 }
 
+export async function fetchHighlights(username: string) {
+  const { data } = await apiClient.get(`/stories/highlights/${username}/`);
+  return data;
+}
 
 export async function SeenStory(id: number) {
   const { data } = await apiClient.post(`/stories/${id}/seen/`);
