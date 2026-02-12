@@ -1,4 +1,5 @@
 from datetime import timedelta
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
 from rest_framework.views import APIView
@@ -125,4 +126,14 @@ class StorySeenView(generics.ListAPIView):
         user = self.request.user
         return StoryView.objects.filter(story__owner=user).order_by('-viewed_at')
     
-    
+class UserHighlightsView(APIView):
+    def get(self, request, username):
+        # username
+        user = get_object_or_404(User, username=username)
+        
+        # گرفتن هایلایت‌های کاربر
+        highlights = Highlight.objects.filter(owner=user).order_by('-created_at')
+        
+        # serialize 
+        serializer = HighlightSerializer(highlights, many=True)
+        return Response(serializer.data)

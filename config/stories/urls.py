@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    CreateStoryView, StoryFeedView, ViewStoryAPIView,
+    CreateStoryView, StoryFeedView, UserHighlightsView, ViewStoryAPIView,
     AddMentionAPIView, AddReactionAPIView,
     CreateHighlightView, AddStoryToHighlightView ,
     RemoveStoryFromHighlightView
@@ -15,6 +15,8 @@ urlpatterns = [
     path('highlight/create/', CreateHighlightView.as_view()),
     path('highlight/<int:highlight_id>/<int:story_id>/add/', AddStoryToHighlightView.as_view()),
     path('highlight/<int:highlight_id>/<int:story_id>/remove/', RemoveStoryFromHighlightView.as_view()),
+    # user Highlits
+    path('highlights/<str:username>/', UserHighlightsView.as_view(), name='user-highlights'),
 
     path('story/<int:story_id>/seen/', ViewStoryAPIView.as_view()),
     path('story/<int:story_id>/', ViewStoryAPIView.as_view()),
