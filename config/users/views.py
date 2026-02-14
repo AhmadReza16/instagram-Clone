@@ -116,17 +116,19 @@ class CurrentProfileUserView(generics.RetrieveUpdateAPIView):
         return Response(serializer.data)
     
 class UpdateProfileView(generics.UpdateAPIView):
-    queryset = User.objects.all()
     serializer_class = UpdateProfileSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_object(self):
-        username = self.kwargs['username']
-        return generics.get_object_or_404(User, username=username)
+        # Return the current user for update
+        return self.request.user
+
+    def patch(self, request, *args, **kwargs):
+        # Allow partial updates (PATCH)
+        return self.partial_update(request, *args, **kwargs)
 
     def put(self, request, *args, **kwargs):
-        if request.user.username != self.kwargs['username']:
-            return Response({"detail": "You do not have permission to update this profile."}, status=status.HTTP_403_FORBIDDEN)
+        # Allow full updates (PUT)
         return self.update(request, *args, **kwargs)
     
 
@@ -143,11 +145,9 @@ class MyProfileView(generics.RetrieveUpdateAPIView):
         return super().patch(request, *args, **kwargs)
     
 class UserProfileView(generics.RetrieveAPIView):
-    serializer_class = ProfileSerializer
+    serializer_class = UserProfileSerializer
     permission_classes = (AllowAny,)
 
     def get_object(self):
         username = self.kwargs['username']
-        user = generics.get_object_or_404(User, username=username)
-        profile, _ = Profile.objects.get_or_create(user=user)
-        return profile
+        return generics.get_object_or_404(User, username=username)

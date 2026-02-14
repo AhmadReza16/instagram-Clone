@@ -65,15 +65,19 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class UpdateProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Profile
-        fields = ('bio', 'website', 'avatar')
-        read_only_fields = ('username',)
+        model = User
+        fields = ('full_name', 'bio', 'profile_image')
 
-        def update(self, instance, validated_data):
-            instance.bio = validated_data.get('bio', instance.bio)
-            instance.profile_image = validated_data.get('profile_image', instance.profile_image)
-            instance.save()
-            return instance
+    def update(self, instance, validated_data):
+        instance.full_name = validated_data.get('full_name', instance.full_name)
+        instance.bio = validated_data.get('bio', instance.bio)
+        
+        # Handle profile_image if provided
+        if 'profile_image' in validated_data:
+            instance.profile_image = validated_data.get('profile_image')
+        
+        instance.save()
+        return instance
         
 
 class FollowerSerializer(serializers.ModelSerializer):
@@ -101,17 +105,40 @@ class UserProfileSerializer(serializers.ModelSerializer):
     followers_count = serializers.SerializerMethodField()
     following_count = serializers.SerializerMethodField()
     posts_count = serializers.SerializerMethodField()
+    is_following = serializers.SerializerMethodField()
+    avatar = serializers.CharField(source='profile_image', read_only=True)
+    posts = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'bio', 'profile_image', 'followers_count', 'following_count', 'posts_count')
-        read_only_fields = ('id', 'username', 'bio', 'profile_image')
+        fields = ('id', 'username', 'full_name', 'bio', 'avatar', 'profile_image', 'email', 'followers_count', 'following_count', 'posts_count', 'is_following', 'posts', 'created_at')
+        read_only_fields = ('id', 'username', 'email', 'created_at')
 
     def get_followers_count(self, obj):
-        return obj.followers.count()
+        return obj.followers_set.count() if hasattr(obj, 'followers_set') else 0
 
     def get_following_count(self, obj):
-        return obj.following.count()
+        return obj.following_set.count() if hasattr(obj, 'following_set') else 0
 
     def get_posts_count(self, obj):
-        return obj.posts.count()
+        return obj.posts.count() if hasattr(obj, 'posts') else 0
+
+    def get_posts(self, obj):
+        """Return user's posts"""
+        from posts.serializers import PostSerializer
+        posts = obj.posts.all()
+        return PostSerializer(posts, many=True, context=self.context).data
+
+    def get_is_following(self, obj):
+        request = self.context.get('request')
+        if not request or not request.user.is_authenticated:
+            return False
+        # Check if current user follows this user
+        try:
+            from follow.models import Follow
+            return Follow.objects.filter(follower=request.user, following=obj).exists()
+        except:
+            return False
+        if request and request.user.is_authenticated:
+            return request.user.following.filter(id=obj.id).exists()
+        return False
