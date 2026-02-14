@@ -14,8 +14,14 @@ export function useComments(postId: number) {
   }, [postId]);
 
   const addComment = async (content: string) => {
-    const newComment = await createComment(postId, content);
-    setComments((prev) => [...prev, newComment]);
+    try {
+      const newComment = await createComment(postId, content);
+      setComments((prev) => [...prev, newComment]);
+      return newComment;
+    } catch (error) {
+      console.error("Failed to add comment:", error);
+      throw error;
+    }
   };
 
   return { comments, loading, addComment };

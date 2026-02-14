@@ -7,12 +7,15 @@ export function useSave(postId: number, initialSaved: boolean) {
   const [saved, setSaved] = useState(initialSaved);
 
   const toggleSave = async () => {
+    const wasSaved = saved;
     setSaved(!saved);
 
     try {
       saved ? await unsavePost(postId) : await savePost(postId);
-    } catch {
-      setSaved(saved);
+    } catch (error) {
+      console.error("Failed to toggle save:", error);
+      setSaved(wasSaved);
+      throw error;
     }
   };
 

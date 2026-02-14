@@ -10,21 +10,28 @@ export function useFollow(
 ) {
   const [isFollowing, setIsFollowing] = useState(initialFollowing);
   const [followers, setFollowers] = useState(initialCount);
+  const [loading, setLoading] = useState(false);
 
-  const ToggleFollow = async () => {
+  const toggleFollow = async () => {
+    if (loading) return;
+    
+    setLoading(true);
+    const wasFollowing = isFollowing;
+    const previousCount = followers;
+
     setIsFollowing(!isFollowing);
     setFollowers((c) => (isFollowing ? c - 1 : c + 1));
 
     try {
-      isFollowing
-        ? await toggleFollow(userId) // follow
-        : await toggleFollow(userId); // unfollow
-        
-    } catch {
-      setIsFollowing(initialFollowing);
-      setFollowers(initialCount);
+      await toggleFollow(userId);
+    } catch (error) {
+      console.error("Failed to toggle follow:", error);
+      setIsFollowing(wasFollowing);
+      setFollowers(previousCount);
+    } finally {
+      setLoading(false);
     }
   };
 
-  return { isFollowing, followers, ToggleFollow };
+  return { isFollowing, followers, toggleFollow, loading };
 }
