@@ -1,13 +1,15 @@
-export function getErrorMessage(error: any): string {
+export function getErrorMessage(error: unknown): string {
   if (!error) return "Something went wrong";
 
   if (typeof error === "string") return error;
 
-  if (error.response?.data?.detail)
-    return error.response.data.detail;
+  const axiosError = error as any;
+  
+  if (axiosError.response?.data?.detail)
+    return axiosError.response.data.detail;
 
-  if (error.response?.data?.message)
-    return error.response.data.message;
+  if (axiosError.response?.data?.message)
+    return axiosError.response.data.message;
 
   return "Unexpected error occurred";
 }
