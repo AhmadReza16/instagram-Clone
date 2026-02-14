@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { formatDate } from "@/utils/formatDate";
+import { getImageUrl } from "@/lib/image-url";
 
 interface PostCardProps {
   post: {
@@ -16,16 +17,20 @@ interface PostCardProps {
 }
 
 export function PostCard({ post }: PostCardProps) {
+  const avatarUrl = getImageUrl(post.user.avatar) || "/avatar.png";
+  const imageUrl = getImageUrl(post.image);
+
   return (
     <div className="border rounded-lg overflow-hidden bg-background">
       {/* Header */}
       <div className="flex items-center gap-3 p-3">
         <Image
-          src={post.user.avatar || "/avatar.png"}
+          src={avatarUrl}
           alt={post.user.username}
           width={36}
           height={36}
-          className="rounded-full"
+          unoptimized
+          className="rounded-full object-cover"
         />
         <Link
           href={`/profile/${post.user.username}`}
@@ -37,10 +42,11 @@ export function PostCard({ post }: PostCardProps) {
 
       {/* Image */}
       <Image
-        src={post.image}
+        src={imageUrl}
         alt="post"
         width={500}
         height={500}
+        unoptimized
         className="w-full object-cover"
       />
 

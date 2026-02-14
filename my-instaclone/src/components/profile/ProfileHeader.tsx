@@ -1,10 +1,26 @@
 import Image from "next/image";
-import { User, MapPin, Link as LinkIcon, Settings, Link } from "lucide-react";
+import Link from "next/link";
+import { User, MapPin, Link as LinkIcon, Settings } from "lucide-react";
 import { ProfileActions } from "./ProfileActions";
 import { ProfileStats } from "./ProfileStats";
+import { getImageUrl } from "@/lib/image-url";
 
+interface ProfileProps {
+  id: number;
+  username: string;
+  avatar?: string;
+  full_name?: string;
+  bio?: string;
+  website?: string;
+  website_url?: string;
+  location?: string;
+  followers_count?: number;
+  following_count?: number;
+  posts_count?: number;
+  is_following?: boolean;
+}
 interface ProfileHeaderProps {
-  profile: any;
+  profile: ProfileProps;
   isOwnProfile?: boolean;
 }
 
@@ -12,7 +28,9 @@ export function ProfileHeader({
   profile,
   isOwnProfile = false,
 }: ProfileHeaderProps) {
-  const avatarUrl = profile.avatar;
+  // Handle relative URLs and convert to absolute if needed
+  const avatarUrl = getImageUrl(profile.avatar || profile.profile_image);
+
   const website = profile.website || profile.website_url;
 
   return (
@@ -26,6 +44,7 @@ export function ProfileHeader({
                 src={avatarUrl}
                 alt={profile.username}
                 fill
+                unoptimized
                 className="rounded-full object-cover border-4 border-gray-800"
               />
             ) : (

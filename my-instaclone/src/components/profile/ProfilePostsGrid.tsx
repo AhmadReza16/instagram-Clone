@@ -1,8 +1,26 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, MessageCircle } from "lucide-react";
+import { getImageUrl } from "@/lib/image-url";
 
-export function ProfilePostsGrid({ posts }: { posts: any[] }) {
+interface PostImage {
+  image: string;
+}
+
+interface Post {
+  id: number;
+  images?: PostImage[];
+  image?: string;
+  caption?: string;
+  likes_count?: number;
+  comments_count?: number;
+}
+
+interface ProfilePostsGridProps {
+  posts: Post[];
+}
+
+export function ProfilePostsGrid({ posts }: ProfilePostsGridProps) {
   if (!posts || posts.length === 0) {
     return null;
   }
@@ -20,7 +38,7 @@ export function ProfilePostsGrid({ posts }: { posts: any[] }) {
       <div className="grid grid-cols-3 gap-1">
         {posts.map((post) => {
           // Get first image from PostImages array
-          const imageUrl = post.images?.[0]?.image || post.image;
+          const imageUrl = getImageUrl(post.images?.[0]?.image || post.image);
 
           if (!imageUrl) return null;
 
@@ -34,6 +52,7 @@ export function ProfilePostsGrid({ posts }: { posts: any[] }) {
                 src={imageUrl}
                 alt={post.caption || "Post"}
                 fill
+                unoptimized
                 className="object-cover group-hover:scale-110 transition-transform duration-300"
               />
 

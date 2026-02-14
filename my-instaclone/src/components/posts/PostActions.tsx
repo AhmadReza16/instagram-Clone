@@ -23,19 +23,20 @@ export default function PostActions({
     if (loading) return;
 
     setLoading(true);
+    const wasLiked = isLiked;
+    const previousCount = likesCount;
 
     // optimistic update
     setIsLiked(!isLiked);
     setLikesCount((prev) => (isLiked ? prev - 1 : prev + 1));
 
     try {
-      if (!isLiked) {
-        await toggleLiked(postId);
-      }
+      await toggleLiked(postId);
     } catch (err) {
+      console.error("Failed to toggle like:", err);
       // rollback
-      setIsLiked(isLiked);
-      setLikesCount(initialLikesCount);
+      setIsLiked(wasLiked);
+      setLikesCount(previousCount);
     } finally {
       setLoading(false);
     }

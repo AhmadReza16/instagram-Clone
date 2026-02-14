@@ -1,4 +1,14 @@
-export function ProfileStats({ profile }: { profile: any }) {
+interface Profile {
+  posts_count?: number;
+  followers_count?: number;
+  following_count?: number;
+}
+
+interface ProfileStatsProps {
+  profile: Profile;
+}
+
+export function ProfileStats({ profile }: ProfileStatsProps) {
   const stats = [
     { label: "posts", value: profile.posts_count || 0 },
     { label: "followers", value: profile.followers_count || 0 },

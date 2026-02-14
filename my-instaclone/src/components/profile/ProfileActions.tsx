@@ -1,10 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useFollow } from "@/hooks/useFollow";
 
-export function ProfileActions({ profile }: { profile: any }) {
+interface ProfileActionProps {
+  profile: {
+    id: number;
+    username: string;
+    is_following?: boolean;
+    followers_count?: number;
+  };
+}
+
+export function ProfileActions({ profile }: ProfileActionProps) {
   const { user, loading } = useAuth();
 
   // Always call hooks in the same order - never conditionally
@@ -19,7 +29,11 @@ export function ProfileActions({ profile }: { profile: any }) {
   }
 
   if (user?.username === profile.username) {
-    return <Button>Edit Profile</Button>;
+    return (
+      <Link href="/profile/edit">
+        <Button>Edit Profile</Button>
+      </Link>
+    );
   }
 
   return (
