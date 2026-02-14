@@ -7,8 +7,19 @@ import { FeedSkeleton } from "@/components/skeletons/FeedSkeleton";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
 
+interface SavedPost {
+  id: number;
+  user: {
+    username: string;
+    avatar?: string;
+  };
+  image: string;
+  caption?: string;
+  created_at: string;
+}
+
 export default function SavedPostsPage() {
-  const [posts, setPosts] = useState<any[]>([]);
+  const [posts, setPosts] = useState<SavedPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 

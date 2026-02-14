@@ -7,8 +7,18 @@ import { FeedSkeleton } from "@/components/skeletons/FeedSkeleton";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
 
+interface Notification {
+  id: number;
+  actor: {
+    username: string;
+  };
+  verb: string;
+  target_url?: string;
+  created_at: string;
+}
+
 export default function NotificationsPage() {
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -20,7 +30,7 @@ export default function NotificationsPage() {
       const notifications = Array.isArray(res)
         ? res
         : res?.results || res?.data || [];
-      setData(notifications);
+      setData(notifications as Notification[]);
       setError(false);
     } catch {
       setError(true);
