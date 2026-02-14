@@ -2,7 +2,12 @@
 
 import { Search, X } from "lucide-react";
 
-export function SearchInput({ value, onChange }: any) {
+interface SearchInputProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+export function SearchInput({ value, onChange }: SearchInputProps) {
   return (
     <div className="relative">
       <Search

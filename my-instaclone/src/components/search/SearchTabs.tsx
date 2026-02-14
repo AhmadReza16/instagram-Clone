@@ -1,4 +1,9 @@
-export function SearchTabs({ active, onChange }: any) {
+interface SearchTabsProps {
+  active: string;
+  onChange: (tab: string) => void;
+}
+
+export function SearchTabs({ active, onChange }: SearchTabsProps) {
   const tabs = ["all", "users", "posts", "tags"];
 
   return (
