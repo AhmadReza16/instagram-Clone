@@ -1,9 +1,23 @@
 import Link from "next/link";
 import Image from "next/image";
 import { User } from "lucide-react";
+import { getImageUrl } from "@/lib/image-url";
 
-export function ThreadItem({ thread }: any) {
-  const avatarUrl = thread.user?.avatar;
+interface ThreadItemProps {
+  thread: {
+    id: number;
+    user?: {
+      username: string;
+      avatar?: string;
+    };
+    last_message?: string;
+    unread_count?: number;
+  };
+}
+
+export function ThreadItem({ thread }: ThreadItemProps) {
+  const avatarUrl = getImageUrl(thread.user?.avatar);
+
   const lastMessage = thread.last_message || "No messages yet";
   const unreadCount = thread.unread_count || 0;
 
@@ -20,6 +34,7 @@ export function ThreadItem({ thread }: any) {
             alt={thread.user?.username || "User"}
             width={48}
             height={48}
+            unoptimized
             className="rounded-full object-cover"
           />
         ) : (

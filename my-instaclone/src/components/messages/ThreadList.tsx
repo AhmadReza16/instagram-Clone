@@ -1,7 +1,18 @@
 import { ThreadItem } from "./ThreadItem";
 
+interface Thread {
+  id: number;
+  user: {
+    id: number;
+    username: string;
+    avatar?: string;
+  };
+  last_message?: string;
+  unread_count?: number;
+}
+
 type Props = {
-  threads?: Thread[]; // optional
+  threads?: Thread[];
 };
 
 export function ThreadList({ threads = [] }: Props) {

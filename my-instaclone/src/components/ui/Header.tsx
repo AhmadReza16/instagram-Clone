@@ -12,7 +12,7 @@ export default function Header() {
             height={24}
             className="pt-1"
           />
-          <p>Instagram</p>
+          <p>Instagram Clone</p>
         </div>
 
         {/* <div>
