@@ -34,7 +34,7 @@ export function ProfileHeader({
   const website = profile.website || profile.website_url;
 
   return (
-    <div className="border-b border-gray-800 py-8">
+    <div className="border-b border-gray-800 py-8 ml-2">
       <div className="flex gap-8 items-start">
         {/* Avatar Section */}
         <div className="flex-shrink-0">

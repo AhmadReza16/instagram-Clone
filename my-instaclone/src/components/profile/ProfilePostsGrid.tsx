@@ -28,14 +28,14 @@ export function ProfilePostsGrid({ posts }: ProfilePostsGridProps) {
   return (
     <div className="mt-12">
       {/* Grid Header */}
-      <div className="border-t border-gray-800 py-6">
+      <div className="border-t border-gray-800 py-6 px-2">
         <h2 className="text-gray-400 uppercase text-xs font-semibold tracking-wider">
           Posts
         </h2>
       </div>
 
       {/* Posts Grid */}
-      <div className="grid grid-cols-3 gap-1">
+      <div className="grid grid-cols-3 gap-1 p-1">
         {posts.map((post) => {
           // Get first image from PostImages array
           const imageUrl = getImageUrl(post.images?.[0]?.image || post.image);
