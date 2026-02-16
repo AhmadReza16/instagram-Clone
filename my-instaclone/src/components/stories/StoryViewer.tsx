@@ -22,7 +22,7 @@ export function StoryViewer() {
       <button className="absolute left-0 w-1/3 h-full" onClick={prev} />
       <button className="absolute right-0 w-1/3 h-full" onClick={next} />
 
-      <Image src={story.media} alt="" fill className="object-contain" />
+      <Image src={story.media} alt="Story" fill className="object-contain" />
 
       <StoryReactions storyId={story.id} />
       <StoryReplyInput storyId={story.id} />

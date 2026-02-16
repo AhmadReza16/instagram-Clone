@@ -5,8 +5,14 @@ interface StoryAvatarProps {
   story: {
     id: number;
     is_seen?: boolean;
-    user: {
-      avatar: string;
+    owner?: {
+      avatar?: string;
+      profile_image?: string;
+      username: string;
+    };
+    user?: {
+      avatar?: string;
+      profile_image?: string;
       username: string;
     };
   };
@@ -14,7 +20,11 @@ interface StoryAvatarProps {
 }
 
 export function StoryAvatar({ story, onClick }: StoryAvatarProps) {
-  const avatarUrl = getImageUrl(story.user.avatar);
+  // Handle both owner and user fields, prefer profile_image
+  const author = story.owner || story.user;
+  if (!author) return null;
+
+  const avatarUrl = getImageUrl(author.profile_image || author.avatar);
 
   return (
     <button onClick={onClick} className="text-center">
@@ -28,7 +38,7 @@ export function StoryAvatar({ story, onClick }: StoryAvatarProps) {
         {avatarUrl && (
           <Image
             src={avatarUrl}
-            alt=""
+            alt={story.user.username}
             width={56}
             height={56}
             unoptimized
