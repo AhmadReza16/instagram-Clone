@@ -21,7 +21,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { getFeedStories } from '@/services/stories';
-
+import { Story } from '@/types/api';
 
 interface UseStoriesOptions {
   type?: 'feed' | 'profile';
@@ -35,13 +35,16 @@ export function useStories(options: UseStoriesOptions = { type: 'feed' }) {
     isError,
   } = useQuery({
     queryKey: ['stories', options],
-    queryFn: getFeedStories,
+    queryFn: async () => {
+      const response = await getFeedStories();
+      return Array.isArray(response) ? response : response.results || [];
+    },
     enabled: options.type === 'feed',
     staleTime: 1000 * 60,
   });
 
   return {
-    stories: data ?? [],
+    stories: (data as Story[]) ?? [],
     isLoading,
     isError,
   };

@@ -30,6 +30,7 @@ export function usePosts(options: UsePostsOptions = { type: 'feed' }) {
       }
       return getFeedPosts({ page: pageParam });
     },
+    initialPageParam: 1,
     getNextPageParam: (lastPage) => lastPage.nextPage ?? false,
     enabled: options.type === 'feed' || options.type === 'suggested',
   });
