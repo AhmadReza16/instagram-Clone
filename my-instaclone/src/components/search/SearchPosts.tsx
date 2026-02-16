@@ -14,22 +14,24 @@ interface SearchPostsProps {
 export function SearchPosts({ posts }: SearchPostsProps) {
   return (
     <div className="grid grid-cols-3 gap-1 mt-4">
-      {posts.map((p) => {
-        const imageUrl = getImageUrl(p.image);
-
-        return (
-          <Link key={p.id} href={`/post/${p.id}`}>
+      {posts
+        .map((p) => {
+          const imageUrl = getImageUrl(p.image);
+          return imageUrl ? { id: p.id, imageUrl } : null;
+        })
+        .filter(Boolean)
+        .map((item: any) => (
+          <Link key={item.id} href={`/post/${item.id}`}>
             <Image
-              src={imageUrl}
-              alt=""
+              src={item.imageUrl}
+              alt="Post"
               width={300}
               height={300}
               unoptimized
               className="aspect-square object-cover"
             />
           </Link>
-        );
-      })}
+        ))}
     </div>
   );
 }

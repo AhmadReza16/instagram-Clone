@@ -9,6 +9,7 @@ interface ThreadItemProps {
     user?: {
       username: string;
       avatar?: string;
+      profile_image?: string;
     };
     last_message?: string;
     unread_count?: number;
@@ -16,7 +17,10 @@ interface ThreadItemProps {
 }
 
 export function ThreadItem({ thread }: ThreadItemProps) {
-  const avatarUrl = getImageUrl(thread.user?.avatar);
+  // Use profile_image first (primary), fallback to avatar
+  const avatarUrl = getImageUrl(
+    thread.user?.profile_image || thread.user?.avatar,
+  );
 
   const lastMessage = thread.last_message || "No messages yet";
   const unreadCount = thread.unread_count || 0;

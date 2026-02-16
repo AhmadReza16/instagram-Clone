@@ -38,7 +38,8 @@ export function ProfilePostsGrid({ posts }: ProfilePostsGridProps) {
       <div className="grid grid-cols-3 gap-1 p-1">
         {posts.map((post) => {
           // Get first image from PostImages array
-          const imageUrl = getImageUrl(post.images?.[0]?.image || post.image);
+          const imageUrl =
+            getImageUrl(post.images?.[0]?.image || post.image) || undefined;
 
           if (!imageUrl) return null;
 
@@ -57,7 +58,7 @@ export function ProfilePostsGrid({ posts }: ProfilePostsGridProps) {
               />
 
               {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center gap-8 opacity-0 group-hover:opacity-100">
+              <div className="absolute inset-0  bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center gap-8 opacity-0 group-hover:opacity-100">
                 <div className="flex items-center gap-2 text-white">
                   <Heart size={24} className="fill-white" />
                   <span className="font-semibold">{post.likes_count || 0}</span>

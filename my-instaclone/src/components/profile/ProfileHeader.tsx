@@ -9,6 +9,7 @@ interface ProfileProps {
   id: number;
   username: string;
   avatar?: string;
+  profile_image?: string;
   full_name?: string;
   bio?: string;
   website?: string;
