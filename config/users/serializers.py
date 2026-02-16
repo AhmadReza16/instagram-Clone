@@ -48,6 +48,7 @@ from .models import Profile
 class ProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.EmailField(source='user.email', read_only=True)
+    profile_image = serializers.CharField(source='user.profile_image', read_only=True)
 
     class Meta:
         model = Profile
@@ -58,9 +59,10 @@ class ProfileSerializer(serializers.ModelSerializer):
             'bio',
             'website',
             'avatar',
+            'profile_image',
             'created_at',
         )
-        read_only_fields = ('id', 'username', 'email', 'created_at')
+        read_only_fields = ('id', 'username', 'email', 'created_at', 'profile_image')
 
 
 class UpdateProfileSerializer(serializers.ModelSerializer):

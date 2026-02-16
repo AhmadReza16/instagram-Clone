@@ -15,9 +15,16 @@ class HashtagSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 
+class PostUserSerializer(serializers.Serializer):
+    """Minimal user info for posts - includes avatar options"""
+    id = serializers.IntegerField()
+    username = serializers.CharField()
+    avatar = serializers.CharField(source='profile_image', allow_null=True)
+    profile_image = serializers.CharField(allow_null=True)
+
 
 class PostSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)
+    user = serializers.SerializerMethodField()
     images = PostImageSerializer(many=True, read_only=True)
     hashtags = HashtagSerializer(many=True, read_only=True)
     likes_count = serializers.SerializerMethodField()
@@ -32,6 +39,14 @@ class PostSerializer(serializers.ModelSerializer):
             'created_at', 'updated_at'
         )
         read_only_fields = ('id', 'user', 'created_at', 'updated_at')
+
+    def get_user(self, obj):
+        return {
+            'id': obj.user.id,
+            'username': obj.user.username,
+            'avatar': obj.user.profile_image.name if obj.user.profile_image else None,
+            'profile_image': obj.user.profile_image.name if obj.user.profile_image else None,
+        }
 
     def get_likes_count(self, obj):
         return obj.likes.count() if hasattr(obj, 'likes') else 0

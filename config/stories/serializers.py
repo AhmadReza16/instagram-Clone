@@ -2,6 +2,13 @@ from rest_framework import serializers
 from .models import Story, StoryView, StoryMention, StoryReaction, Highlight 
 from users.models import User
 
+class UserAvatarSerializer(serializers.ModelSerializer):
+    avatar = serializers.CharField(source='profile_image', read_only=True, allow_null=True)
+    
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'avatar', 'profile_image']
+
 class StoryMentionSerializer(serializers.ModelSerializer):
     class Meta:
         model = StoryMention
@@ -45,7 +52,7 @@ class StorySeenSerializer(serializers.ModelSerializer):
         fields = ['id', 'viewer', 'viewed_at']
 
 class StoriFeedSerializer(serializers.ModelSerializer):
-    owner = serializers.StringRelatedField()
+    owner = UserAvatarSerializer(read_only=True)
     class Meta:
         model = Story
         fields = ['id', 'owner', 'media', 'caption', 'created_at', 'expires_at']

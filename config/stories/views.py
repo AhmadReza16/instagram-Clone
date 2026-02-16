@@ -15,7 +15,7 @@ from follow.models import Follow   #   اپ فالو که ساختیم
 from .serializers import (
     StorySeenSerializer, StorySerializer, StoryMentionSerializer,
     StoryReactionSerializer, StoryViewSerializer,
-    HighlightSerializer
+    HighlightSerializer, StoriFeedSerializer
 )
 
 
@@ -107,7 +107,7 @@ class RemoveStoryFromHighlightView(generics.UpdateAPIView):
 
 class StoryFeedView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = StorySerializer
+    serializer_class = StoriFeedSerializer
 
     def get_queryset(self):
         user = self.request.user
@@ -116,7 +116,7 @@ class StoryFeedView(generics.ListAPIView):
         return Story.objects.filter(
             owner__in=following_users,
             expires_at__gt=now
-        ).order_by('-created_at')
+        ).select_related('owner').order_by('-created_at')
     
 class StorySeenView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
