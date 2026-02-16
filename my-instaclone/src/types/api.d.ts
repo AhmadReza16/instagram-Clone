@@ -5,12 +5,21 @@ export interface CreateStoryPayload {
 
 export interface Story {
   id: number;
-  title: string;
-  content: string;
-  author: {
+  title?: string;
+  content?: string;
+  author?: {
     username: string;
+    avatar?: string;
   };
+  owner?: string | {
+    id: number;
+    username: string;
+    avatar?: string;
+  };
+  media?: string;
+  caption?: string;
   created_at: string;
+  expires_at?: string;
 }
 
 export interface PostImage {
@@ -42,6 +51,7 @@ export interface PostComment {
 export interface Post {
   id: number;
   user: {
+    profile_image: string | undefined;
     id: number;
     username: string;
     avatar?: string;

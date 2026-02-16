@@ -7,7 +7,14 @@ export async function fetchComments(postId: number) {
   const { data } = await apiClient.get(
     `/comments/posts/${postId}/`
   );
-  return data;
+  // Ensure we return an array - handle both list and paginated responses
+  if (Array.isArray(data)) {
+    return data;
+  }
+  if (data?.results && Array.isArray(data.results)) {
+    return data.results;
+  }
+  return [];
 }
 
 export async function createComment(postId: number, content: string) {
