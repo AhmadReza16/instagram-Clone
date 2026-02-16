@@ -1,5 +1,6 @@
 "use client";
 
+import { use } from "react";
 import { useMessages } from "@/hooks/useMessages";
 import { MessageList } from "@/components/messages/MessageList";
 import { MessageInput } from "@/components/messages/MessageInput";
@@ -7,9 +8,10 @@ import { MessageInput } from "@/components/messages/MessageInput";
 export default function ThreadPage({
   params,
 }: {
-  params: { threadId: string };
+  params: Promise<{ threadId: string }>;
 }) {
-  const { messages, send } = useMessages(Number(params.threadId));
+  const { threadId } = use(params);
+  const { messages, send } = useMessages(Number(threadId));
   const me = "me"; // از auth میاد بعداً
 
   return (

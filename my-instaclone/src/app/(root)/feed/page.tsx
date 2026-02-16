@@ -5,16 +5,10 @@ import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
 import { DiscoverBanner } from "@/components/discover/DiscoverBanner";
 import { usePosts } from "@/hooks/usePosts";
-import { useStories } from "@/hooks/useStories";
-import StoryFeed from "@/components/stories/StoryFeed";
 import { PostCard } from "@/components/posts/PostCard";
-
-import { Fragment, useState } from "react";
+import { StoryStrip } from "@/components/stories/StoryStrip";
 
 export default function FeedPage() {
-  // حالت: feed یا suggested
-  const [showSuggested, setShowSuggested] = useState(false);
-
   const {
     posts: feedPosts,
     isLoading: feedLoading,
@@ -27,13 +21,6 @@ export default function FeedPage() {
     isError: suggestedError,
   } = usePosts({ type: "suggested" });
 
-  const {
-    stories,
-    isLoading: storiesLoading,
-    isError: storiesError,
-  } = useStories({ type: "feed" });
-
-  // اگر feed خالی است، automatic طور suggested posts نشان بده
   const feedPostsExists = feedPosts && feedPosts.length > 0;
   const suggestedPostsExists = suggestedPosts && suggestedPosts.length > 0;
 
@@ -42,8 +29,8 @@ export default function FeedPage() {
     : suggestedPostsExists
       ? suggestedPosts
       : [];
-  const postsLoading = !feedPostsExists ? suggestedLoading : feedLoading;
-  const postsError = !feedPostsExists ? suggestedError : feedError;
+  const postsLoading = feedLoading || suggestedLoading;
+  const postsError = feedPostsExists ? feedError : suggestedError;
   const hasFeedPosts = feedPostsExists;
 
   if (postsLoading) {
@@ -59,77 +46,45 @@ export default function FeedPage() {
     );
   }
 
-  if (posts.length === 0) {
-    return (
-      <EmptyState
-        title="No posts yet"
-        description="Follow people to see their posts here."
-      />
-    );
-  }
-
   return (
-    <main className="min-h-screen bg-gray-900 py-6">
-      <div className="max-w-2xl mx-auto px-4 py-6">
-        {/* STORIES */}
-        <section className="mb-8">
-          {storiesLoading && (
-            <div className="h-24 rounded-xl bg-gray-900 animate-pulse" />
-          )}
-
-          {storiesError && (
-            <div className="bg-red-900 border border-red-700 rounded-lg p-3 text-sm text-red-200">
-              Failed to load stories
-            </div>
-          )}
-
-          {!storiesLoading && !storiesError && stories.length > 0 && (
-            <StoryFeed stories={stories} />
-          )}
+    <main className="min-h-screen bg-gray-900">
+      <div className="max-w-2xl mx-auto">
+        {/* Stories Section - Sticky */}
+        <section className="border-b border-gray-800 m-4 sticky top-0 bg-background/95 backdrop-blur-sm z-20">
+          <StoryStrip />
         </section>
 
-        {/* DISCOVER BANNER - if showing suggested posts */}
-        {!hasFeedPosts && suggestedPosts.length > 0 && (
-          <DiscoverBanner showFollow={true} />
-        )}
-
-        {/* POSTS */}
-        <section className="space-y-6">
-          {postsLoading && (
-            <Fragment>
-              <div className="h-96 rounded-xl bg-gray-900 animate-pulse" />
-              <div className="h-96 rounded-xl bg-gray-900 animate-pulse" />
-            </Fragment>
-          )}
-
-          {postsError && (
-            <div className="bg-red-900 border border-red-700 rounded-lg p-4 text-sm text-red-200">
-              Failed to load posts. Please try again later.
+        {/* Feed Content */}
+        <div className="divide-y divide-gray-800">
+          {/* Discover Banner */}
+          {!hasFeedPosts && suggestedPosts.length > 0 && (
+            <div className="p-4">
+              <DiscoverBanner showFollow={true} />
             </div>
           )}
 
-          {!postsLoading && !postsError && posts.length === 0 && (
-            <EmptyState
-              title="No posts to show"
-              description="Follow more people to see their posts in your feed"
-            />
-          )}
-
-          {!postsLoading &&
-            !postsError &&
-            posts &&
-            posts.length > 0 &&
+          {/* Posts List */}
+          {posts.length === 0 ? (
+            <div className="py-12">
+              <EmptyState
+                title="No posts to show"
+                description="Follow more people to see their posts in your feed"
+              />
+            </div>
+          ) : (
             posts.map((post) => {
               if (!post) return null;
-              // Ensure post has required image field
-              const postWithImage = {
-                ...post,
-                image:
-                  post.image || post.images?.[0]?.image || "/placeholder.png",
-              };
-              return <PostCard key={post.id} post={postWithImage} />;
-            })}
-        </section>
+              return (
+                <div
+                  key={post.id}
+                  className="border-b border-gray-800 hover:bg-gray-950/30 transition-colors"
+                >
+                  <PostCard post={post} />
+                </div>
+              );
+            })
+          )}
+        </div>
       </div>
     </main>
   );
