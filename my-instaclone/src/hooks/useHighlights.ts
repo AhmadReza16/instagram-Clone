@@ -1,10 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  fetchHighlights,
-  fetchHighlightDetail,
-} from "@/services/highlights";
+import { fetchHighlights } from "@/services/highlights";
 
 export function useHighlights(username: string) {
   const [highlights, setHighlights] = useState<any[]>([]);
@@ -25,8 +22,13 @@ export function useHighlights(username: string) {
 
   const open = async (id: number) => {
     try {
-      const data = await fetchHighlightDetail(id);
-      setActive(data);
+      // Find the highlight from the already loaded list instead of making a new request
+      const highlight = highlights.find(h => h.id === id);
+      if (highlight) {
+        setActive(highlight);
+      } else {
+        setError("Highlight not found");
+      }
     } catch (err: any) {
       setError(err.message || "Failed to load highlight");
     }

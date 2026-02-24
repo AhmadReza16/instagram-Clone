@@ -10,7 +10,7 @@ interface UsePostResult {
   error: string | null;
 }
 
-export function usePost(id: string): UsePostResult {
+export function usePost(id: string | number): UsePostResult {
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +26,7 @@ export function usePost(id: string): UsePostResult {
       try {
         setLoading(true);
         setError(null);
-        const data = await getPostById(id);
+        const data = await getPostById(String(id));
         setPost(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch post');
