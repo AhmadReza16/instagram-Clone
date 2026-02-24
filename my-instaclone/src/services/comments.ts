@@ -5,7 +5,7 @@ import { apiClient } from "@/lib/api-client";
 
 export async function fetchComments(postId: number) {
   const { data } = await apiClient.get(
-    `/comments/posts/${postId}/`
+    `comments/posts/${postId}/`
   );
   // Ensure we return an array - handle both list and paginated responses
   if (Array.isArray(data)) {
@@ -19,8 +19,8 @@ export async function fetchComments(postId: number) {
 
 export async function createComment(postId: number, content: string) {
   const { data } = await apiClient.post(
-    `/comments/posts/${postId}/`,
-    { content }
+    `comments/posts/${postId}/`,
+    { text: content, post: postId }
   );
   return data;
 }
