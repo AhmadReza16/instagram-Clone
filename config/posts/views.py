@@ -46,8 +46,11 @@ class FeedView(generics.ListAPIView):
             # Get following IDs
             following_ids = list(user.following_set.values_list('following_id', flat=True))
             
+            # Include user's own posts and posts from followed users
+            following_ids.append(user.id)
+            
             if following_ids:
-                # User has follows - return feed posts
+                # User has follows - return feed posts including own posts
                 return Post.objects.filter(
                     user__id__in=following_ids
                 ).select_related('user').prefetch_related(

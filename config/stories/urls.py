@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
     CreateStoryView, StoryFeedView, UserHighlightsView, ViewStoryAPIView,
-    AddMentionAPIView, AddReactionAPIView,
+    RetrieveStoryAPIView, DeleteStoryAPIView, AddMentionAPIView, AddReactionAPIView,
     CreateHighlightView, AddStoryToHighlightView ,
     RemoveStoryFromHighlightView
 )
@@ -19,7 +19,8 @@ urlpatterns = [
     path('highlights/<str:username>/', UserHighlightsView.as_view(), name='user-highlights'),
 
     path('story/<int:story_id>/seen/', ViewStoryAPIView.as_view()),
-    path('story/<int:story_id>/', ViewStoryAPIView.as_view()),
+    path('story/<int:story_id>/delete/', DeleteStoryAPIView.as_view()),
+    path('story/<int:story_id>/', RetrieveStoryAPIView.as_view()),
     # feed
     path('feed/', StoryFeedView.as_view()),
 ]

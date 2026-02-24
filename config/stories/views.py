@@ -40,6 +40,30 @@ class ViewStoryAPIView(generics.CreateAPIView):
         StoryView.objects.get_or_create(story=story, viewer=request.user)
         return Response({"message": "View registered"})
 
+
+### RETRIEVE SINGLE STORY
+class RetrieveStoryAPIView(generics.RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = StorySerializer
+    queryset = Story.objects.all()
+    lookup_field = 'id'
+    lookup_url_kwarg = 'story_id'
+
+
+### DELETE STORY
+class DeleteStoryAPIView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Story.objects.all()
+    lookup_field = 'id'
+    lookup_url_kwarg = 'story_id'
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        # Check if user owns the story
+        if instance.owner != request.user:
+            return Response({'detail': 'You cannot delete this story.'}, status=status.HTTP_403_FORBIDDEN)
+        return super().destroy(request, *args, **kwargs)
+
 ### ADD REACTION
 class AddReactionAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]

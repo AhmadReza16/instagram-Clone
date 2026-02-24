@@ -16,6 +16,8 @@ class StoryMentionSerializer(serializers.ModelSerializer):
 
 
 class StoryReactionSerializer(serializers.ModelSerializer):
+    user = UserAvatarSerializer(read_only=True)
+    
     class Meta:
         model = StoryReaction
         fields = ['id', 'user', 'emoji', 'reacted_at']
@@ -29,6 +31,7 @@ class StorySerializer(serializers.ModelSerializer):
     mentions = StoryMentionSerializer(many=True, read_only=True)
     reactions = StoryReactionSerializer(many=True, read_only=True)
     views = StoryViewSerializer(many=True, read_only=True)
+    owner = UserAvatarSerializer(read_only=True)
 
     class Meta:
         model = Story
@@ -36,7 +39,7 @@ class StorySerializer(serializers.ModelSerializer):
             'id', 'owner', 'media', 'caption', 'created_at',
             'expires_at', 'mentions', 'reactions', 'views'
         ]
-        read_only_fields = ['owner']
+        read_only_fields = ['owner', 'created_at', 'expires_at']
 
 
 class HighlightSerializer(serializers.ModelSerializer):
