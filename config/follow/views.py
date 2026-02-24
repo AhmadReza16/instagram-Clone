@@ -45,6 +45,55 @@ class FollowToggleView(generics.GenericAPIView):
             return Response({"following": True, "id": follow_obj.id}, status=status.HTTP_201_CREATED)
 
 
+class FollowView(generics.GenericAPIView):
+    """
+    Follow a user.
+    Request body: {"user_id": <user_id>}
+    Creates a follow relationship if it doesn't exist.
+    """
+    serializer_class = FollowSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        follower = request.user
+        user_id = request.data.get("user_id")
+        if user_id is None:
+            return Response({"detail": "user_id is required."}, status=status.HTTP_400_BAD_REQUEST)
+        if int(user_id) == int(getattr(follower, "id")):
+            return Response({"detail": "You cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
+
+        following_user = get_object_or_404(User, pk=user_id)
+
+        follow_obj, created = Follow.objects.get_or_create(follower=follower, following=following_user)
+        if created:
+            return Response({"following": True, "id": follow_obj.id}, status=status.HTTP_201_CREATED)
+        else:
+            return Response({"following": True, "id": follow_obj.id}, status=status.HTTP_200_OK)
+
+
+class UnfollowView(generics.GenericAPIView):
+    """
+    Unfollow a user.
+    Request body: {"user_id": <user_id>}
+    Removes the follow relationship if it exists.
+    """
+    serializer_class = FollowSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        follower = request.user
+        user_id = request.data.get("user_id")
+        if user_id is None:
+            return Response({"detail": "user_id is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            follow_obj = Follow.objects.get(follower=follower, following_id=user_id)
+            follow_obj.delete()
+            return Response({"following": False}, status=status.HTTP_200_OK)
+        except Follow.DoesNotExist:
+            return Response({"following": False}, status=status.HTTP_200_OK)
+
+
 class FollowersListView(generics.ListAPIView):
     """
     List followers of a given user.
