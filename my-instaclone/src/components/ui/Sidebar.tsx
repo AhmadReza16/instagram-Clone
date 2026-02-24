@@ -14,6 +14,7 @@ import {
   ImagePlus,
   X,
   UserRoundPen,
+  Clock,
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -57,6 +58,11 @@ const Sidebar = () => {
       label: "create",
       icon: ImagePlus,
       href: "/create",
+    },
+    {
+      label: "stories",
+      icon: Clock,
+      href: "/stories/my-stories",
     },
     {
       label: "notifications",
