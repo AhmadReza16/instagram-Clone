@@ -36,6 +36,18 @@ class PostCommentsListCreateView(generics.ListCreateAPIView):
             post = get_object_or_404(Post, pk=post_id)
             serializer.validated_data["post"] = post
         return serializer.save()
+    
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        
+        # Return response using CommentSerializer to include user info
+        comment = serializer.instance
+        return_serializer = CommentSerializer(comment, context=self.get_serializer_context())
+        
+        return Response(return_serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class CommentDetailView(generics.RetrieveUpdateDestroyAPIView):

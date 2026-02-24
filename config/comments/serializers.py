@@ -6,22 +6,26 @@ import re
 User = get_user_model()
 
 class SimpleUserSerializer(serializers.ModelSerializer):
+    avatar = serializers.CharField(source='profile_image', read_only=True, allow_null=True)
+    
     class Meta:
         model = User
-        fields = ("id", "username", "full_name", "profile_image")
+        fields = ("id", "username", "full_name", "avatar", "profile_image")
 
 
 class CommentSerializer(serializers.ModelSerializer):
     user = SimpleUserSerializer(read_only=True)
     replies = serializers.SerializerMethodField()
+    # Alias for frontend compatibility
+    content = serializers.CharField(source='text', read_only=True)
 
     class Meta:
         model = Comment
         fields = (
-            "id", "user", "post", "parent", "text",
+            "id", "user", "post", "parent", "text", "content",
             "created_at", "updated_at", "is_deleted", "replies"
         )
-        read_only_fields = ("id", "user", "created_at", "updated_at", "is_deleted", "replies")
+        read_only_fields = ("id", "user", "created_at", "updated_at", "is_deleted", "replies", "content")
 
     def get_replies(self, obj):
         # return only direct replies (one level)
@@ -31,10 +35,12 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class CommentCreateSerializer(serializers.ModelSerializer):
     parent = serializers.IntegerField(write_only=True, required=False, allow_null=True)
+    # Allow both 'content' and 'text' for writing
+    content = serializers.CharField(write_only=True, required=False)
 
     class Meta:
         model = Comment
-        fields = ("post", "parent", "text")
+        fields = ("post", "parent", "text", "content")
 
     def validate(self, attrs):
         parent_id = attrs.get("parent")
@@ -56,11 +62,13 @@ class CommentCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         request_user = self.context["request"].user
         parent = validated_data.pop("parent_obj", None)
+        # Handle both 'content' and 'text' field names
+        text = validated_data.get("text") or validated_data.get("content")
         comment = Comment.objects.create(
             user=request_user,
             post=validated_data["post"],
             parent=parent,
-            text=validated_data["text"]
+            text=text
         )
         return comment
     
