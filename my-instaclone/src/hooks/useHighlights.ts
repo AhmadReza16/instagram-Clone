@@ -15,14 +15,34 @@ export function useHighlights(username: string) {
     setLoading(true);
     setError(null);
     fetchHighlights(username)
-      .then(setHighlights)
+      .then((data) => {
+        // Handle both highlight and story array formats
+        const items = Array.isArray(data) ? data : data?.results || [];
+        
+        // Transform stories to highlight format if needed
+        const highlights = items.map((item: any) => {
+          // If it's a story (has 'media' field), convert to highlight format
+          if (item.media && !item.cover) {
+            return {
+              id: item.id,
+              title: item.caption || `Story ${item.id}`,
+              cover: item.media,
+              stories: [item], // Include the story data
+              ...item
+            };
+          }
+          return item;
+        });
+        
+        setHighlights(highlights);
+      })
       .catch((err) => setError(err.message || "Failed to fetch highlights"))
       .finally(() => setLoading(false));
   }, [username]);
 
   const open = async (id: number) => {
     try {
-      // Find the highlight from the already loaded list instead of making a new request
+      // Find the highlight from the already loaded list
       const highlight = highlights.find(h => h.id === id);
       if (highlight) {
         setActive(highlight);

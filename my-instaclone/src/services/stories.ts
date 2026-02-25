@@ -26,6 +26,12 @@ export async function getFeedStories() {
   return data;
 }
 
+// Get current user's own stories
+export async function getMyStories() {
+  const { data } = await apiClient.get("stories/my-stories/");
+  return data;
+}
+
 // Mark story as seen/viewed
 export async function SeenStory(storyId: number) {
   const { data } = await apiClient.post(`stories/story/${storyId}/seen/`);
@@ -51,6 +57,12 @@ export async function createHighlight(formData: FormData) {
   const { data } = await apiClient.post("stories/highlight/create/", formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+  return data;
+}
+
+// Get stories of a specific user (for profile highlights)
+export async function getUserStories(username: string) {
+  const { data } = await apiClient.get(`stories/user/${username}/`);
   return data;
 }
 

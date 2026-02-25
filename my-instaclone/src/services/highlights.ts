@@ -1,8 +1,15 @@
 import { apiClient } from "@/lib/api-client";
+import { getUserStories } from "./stories";
 
 export async function fetchHighlights(username: string) {
-  const { data } = await apiClient.get(`stories/highlights/${username}/`);
-  return data;
+  try {
+    const { data } = await apiClient.get(`stories/highlights/${username}/`);
+    return data;
+  } catch (err) {
+    // If highlights endpoint fails, try getting user stories instead
+    console.warn("Failed to fetch highlights, trying user stories...");
+    return getUserStories(username);
+  }
 }
 
 export async function deleteHighlight(id: number) {
