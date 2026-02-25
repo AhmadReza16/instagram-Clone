@@ -106,16 +106,25 @@ class ExploreView(generics.ListAPIView):
     pagination_class = None  # Disable pagination for now
 
     def get_queryset(self):
-        # Return popular posts
+        # Return all posts ordered by most recent, excluding expired stories
         try:
-            return Post.objects.select_related('user').prefetch_related(
+            posts = Post.objects.select_related('user').prefetch_related(
                 'images', 'comments', 'likes', 'hashtags'
-            ).order_by('-created_at')[:50]
+            ).order_by('-created_at')[:100]
+            print(f"ExploreView: Found {posts.count()} posts")
+            return posts
         except Exception as e:
             print(f"ExploreView Error: {e}")
             import traceback
             traceback.print_exc()
             return Post.objects.none()
+
+    def list(self, request, *args, **kwargs):
+        # Override list to add debugging
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        print(f"ExploreView response: {len(serializer.data)} posts")
+        return Response(serializer.data)
 
 
 # Suggested Posts view (برای صفحه Explore و جایی که نیاز به پیشنهادات داریم)

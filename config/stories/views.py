@@ -141,6 +141,19 @@ class StoryFeedView(generics.ListAPIView):
             owner__in=following_users,
             expires_at__gt=now
         ).select_related('owner').order_by('-created_at')
+
+# Get current user's own stories
+class MyStoriesView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = StoriFeedSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        now = timezone.now()
+        return Story.objects.filter(
+            owner=user
+        ).select_related('owner').order_by('-created_at')
+    
     
 class StorySeenView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
@@ -160,4 +173,16 @@ class UserHighlightsView(APIView):
         
         # serialize 
         serializer = HighlightSerializer(highlights, many=True)
+        return Response(serializer.data)
+
+# Get all stories of a specific user
+class UserStoriesView(APIView):
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        now = timezone.now()
+        stories = Story.objects.filter(
+            owner=user,
+            expires_at__gt=now
+        ).select_related('owner').order_by('-created_at')
+        serializer = StoriFeedSerializer(stories, many=True)
         return Response(serializer.data)
