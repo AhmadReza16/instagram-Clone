@@ -2,7 +2,12 @@ import { ThreadItem } from "./ThreadItem";
 
 interface Thread {
   id: number;
-  user: {
+  user?: {
+    id: number;
+    username: string;
+    avatar?: string;
+  };
+  other_user?: {
     id: number;
     username: string;
     avatar?: string;
@@ -13,9 +18,10 @@ interface Thread {
 
 type Props = {
   threads?: Thread[];
+  highlightUser?: string | null;
 };
 
-export function ThreadList({ threads = [] }: Props) {
+export function ThreadList({ threads = [], highlightUser }: Props) {
   if (!Array.isArray(threads)) {
     return null; // یا Error UI
   }
@@ -30,9 +36,19 @@ export function ThreadList({ threads = [] }: Props) {
 
   return (
     <div className="divide-y">
-      {threads.map((thread) => (
-        <ThreadItem key={thread.id} thread={thread} />
-      ))}
+      {threads.map((thread) => {
+        const otherUser = thread.other_user || thread.user;
+        const isHighlighted =
+          highlightUser && otherUser?.username === highlightUser;
+
+        return (
+          <ThreadItem
+            key={thread.id}
+            thread={thread}
+            isHighlighted={isHighlighted}
+          />
+        );
+      })}
     </div>
   );
 }

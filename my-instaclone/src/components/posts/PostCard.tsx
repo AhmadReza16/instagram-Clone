@@ -136,12 +136,12 @@ export function PostCard({ post }: PostCardProps) {
       {/* Stats */}
       <div className="px-3 pt-2 pb-3">
         <div className="flex gap-4 text-sm text-gray-400 mb-2">
-          <span className="font-semibold text-gray-400 cursor-pointer hover:text-gray-300">
+          <span className="font-semibold text-gray-600 cursor-pointer hover:text-gray-400">
             {likeCount} {likeCount === 1 ? "like" : "likes"}
           </span>
           <Link
             href={`/post/${post.id}`}
-            className="hover:text-gray-300 cursor-pointer"
+            className="text-gray-600 hover:text-gray-400 cursor-pointer"
           >
             {commentsCount} {commentsCount === 1 ? "comment" : "comments"}
           </Link>
@@ -151,10 +151,10 @@ export function PostCard({ post }: PostCardProps) {
         {post.caption && (
           <div className="mb-2">
             <p className="text-sm">
-              <span className="font-semibold mr-2 hover:text-gray-300 cursor-pointer">
+              <span className="font-semibold mr-2 text-grat-900 hover:text-gray-800 cursor-pointer">
                 {post.user.username}
               </span>
-              <span className="text-gray-300">{post.caption}</span>
+              <span className="text-gray-600">{post.caption}</span>
             </p>
           </div>
         )}
