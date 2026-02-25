@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useStoryStore } from "@/store/useStoryStore";
+import { getImageUrl } from "@/lib/image-url";
 import { StoryProgress } from "./StoryProgress";
 import { StoryReactions } from "./StoryReactions";
 import { StoryReplyInput } from "./StoryReplyInput";
@@ -15,6 +16,8 @@ export function StoryViewer() {
 
   if (!story || !story.media) return null;
 
+  const mediaUrl = getImageUrl(story.media) || "/placeholder.png";
+
   return (
     <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
       <StoryProgress />
@@ -22,7 +25,13 @@ export function StoryViewer() {
       <button className="absolute left-0 w-1/3 h-full" onClick={prev} />
       <button className="absolute right-0 w-1/3 h-full" onClick={next} />
 
-      <Image src={story.media} alt="Story" fill className="object-contain" />
+      <Image
+        src={mediaUrl}
+        alt="Story"
+        fill
+        className="object-contain"
+        unoptimized
+      />
 
       <StoryReactions storyId={story.id} />
       <StoryReplyInput storyId={story.id} />
