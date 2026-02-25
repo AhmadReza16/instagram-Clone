@@ -1,32 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { savePostlist } from "@/services/saves";
+import { getSavedPostsList } from "@/services/saves";
 import { PostCard } from "@/components/posts/PostCard";
 import { FeedSkeleton } from "@/components/skeletons/FeedSkeleton";
 import { EmptyState } from "@/components/states/EmptyState";
 import { ErrorState } from "@/components/states/ErrorState";
-
-interface SavedPost {
-  id: number;
-  user: {
-    username: string;
-    avatar?: string;
-  };
-  image: string;
-  caption?: string;
-  created_at: string;
-}
+import { Post } from "@/types/api";
 
 export default function SavedPostsPage() {
-  const [posts, setPosts] = useState<SavedPost[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   const fetchSavedPosts = async () => {
     try {
       setLoading(true);
-      const data = await savePostlist();
+      const data = await getSavedPostsList();
       setPosts(data);
       setError(false);
     } catch {
