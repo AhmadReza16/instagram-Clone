@@ -15,29 +15,29 @@ export default function ExplorePage() {
   const [tab, setTab] = useState("all");
   const { results, loading, error } = useSearch(query);
 
+  console.log("Explore - Current query:", query);
+  console.log("Explore - Results:", results);
+  console.log("Explore - Loading:", loading);
+  console.log("Explore - Error:", error);
+
   return (
     <div className="min-h-screen bg-black">
-      <div className="max-w-2xl mx-auto px-4 py-6">
+      <div className="max-w-4xl mx-auto px-4 py-6">
         {/* Search Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-white mb-4">Explore</h1>
-          <SearchInput value={query} onChange={setQuery} />
+          <SearchInput
+            value={query}
+            onChange={setQuery}
+            placeholder="Search users, posts..."
+          />
         </div>
-
-        {/* No Search Yet */}
-        {!query.trim() && !results && !loading && (
-          <div className="text-center py-12">
-            <p className="text-gray-400 text-lg">
-              Search for people, posts, or tags
-            </p>
-          </div>
-        )}
 
         {/* Error State */}
         {error && (
           <ErrorState
             title="Search failed"
-            description="Unable to perform search. Please try again."
+            description={error}
             onRetry={() => window.location.reload()}
           />
         )}
@@ -48,72 +48,90 @@ export default function ExplorePage() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-20 bg-gray-900 rounded-lg animate-pulse"
+                className="h-32 bg-gray-900 rounded-lg animate-pulse"
               />
             ))}
           </div>
         )}
 
-        {/* Search Tabs */}
-        {results && !loading && (
-          <>
-            <SearchTabs active={tab} onChange={setTab} />
-
-            {/* Results */}
-            <div className="mt-6 space-y-6">
-              {(tab === "all" || tab === "users") && results.users && (
-                <div>
-                  <h2 className="text-lg font-semibold text-white mb-4">
-                    Users
-                  </h2>
-                  {results.users.length > 0 ? (
-                    <SearchUsers users={results.users} />
-                  ) : (
-                    <p className="text-gray-400">No users found</p>
-                  )}
-                </div>
-              )}
-
-              {(tab === "all" || tab === "posts") && results.posts && (
-                <div>
-                  <h2 className="text-lg font-semibold text-white mb-4">
-                    Posts
-                  </h2>
-                  {results.posts.length > 0 ? (
-                    <SearchPosts posts={results.posts} />
-                  ) : (
-                    <p className="text-gray-400">No posts found</p>
-                  )}
-                </div>
-              )}
-
-              {(tab === "all" || tab === "tags") && results.hashtags && (
-                <div>
-                  <h2 className="text-lg font-semibold text-white mb-4">
-                    Tags
-                  </h2>
-                  {results.hashtags.length > 0 ? (
-                    <SearchTags tags={results.hashtags} />
-                  ) : (
-                    <p className="text-gray-400">No tags found</p>
-                  )}
-                </div>
+        {/* No Search - Show All Posts */}
+        {!query.trim() && results && !loading && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-white mb-6">
+                Explore Posts
+              </h2>
+              {results.posts && results.posts.length > 0 ? (
+                <SearchPosts posts={results.posts} />
+              ) : (
+                <EmptyState
+                  title="No posts yet"
+                  description="Be the first to share something!"
+                />
               )}
             </div>
-          </>
+          </div>
         )}
 
-        {/* No Results */}
-        {results &&
-          !loading &&
-          !results.users?.length &&
-          !results.posts?.length &&
-          !results.hashtags?.length && (
-            <EmptyState
-              title="No results found"
-              description="Try searching for something else"
-            />
-          )}
+        {/* Search Results - Show Users First, Then Posts */}
+        {query.trim() && results && !loading && (
+          <div className="space-y-8">
+            {/* Search Tabs */}
+            <SearchTabs active={tab} onChange={setTab} />
+
+            {/* Users Section - Always First */}
+            {(tab === "all" || tab === "users") && (
+              <div>
+                <h2 className="text-lg font-semibold text-white mb-4">Users</h2>
+                {results.users && results.users.length > 0 ? (
+                  <SearchUsers users={results.users} />
+                ) : (
+                  <p className="text-gray-400 text-center py-8">
+                    No users found
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Posts Section */}
+            {(tab === "all" || tab === "posts") && (
+              <div>
+                <h2 className="text-lg font-semibold text-white mb-4">Posts</h2>
+                {results.posts && results.posts.length > 0 ? (
+                  <SearchPosts posts={results.posts} />
+                ) : (
+                  <p className="text-gray-400 text-center py-8">
+                    No posts found
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Tags Section */}
+            {(tab === "all" || tab === "tags") && results.hashtags && (
+              <div>
+                <h2 className="text-lg font-semibold text-white mb-4">Tags</h2>
+                {results.hashtags.length > 0 ? (
+                  <SearchTags tags={results.hashtags} />
+                ) : (
+                  <p className="text-gray-400 text-center py-8">
+                    No tags found
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* No Results At All */}
+            {!results.users?.length &&
+              !results.posts?.length &&
+              !results.hashtags?.length && (
+                <EmptyState
+                  title="No results found"
+                  description={`No users, posts, or tags matching "${query}"`}
+                />
+              )}
+          </div>
+        )}
       </div>
     </div>
   );
